@@ -2,19 +2,32 @@ package com.sirckopo.guezzdachezz;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.util.DisplayMetrics;
+import android.view.Display;
+import android.view.Window;
+import android.widget.Toast;
 
 
 public class GameActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+
+        // узнаем размеры экрана из класса Display
+        Display display = getWindowManager().getDefaultDisplay();
+        DisplayMetrics metrics = new DisplayMetrics();
+        display.getMetrics(metrics);
+        Toast.makeText(GameActivity.this, metrics.widthPixels + " " + metrics.heightPixels,
+                Toast.LENGTH_SHORT).show();
+
+        //findViewById(R.id.Chessboard).setMinimumWidth(Math.min(dispSize.x, dispSize.y));
+        //findViewById(R.id.Chessboard).setMinimumHeight(Math.min(dispSize.x, dispSize.y));
     }
 
-
+    /*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -36,4 +49,5 @@ public class GameActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+    */
 }
