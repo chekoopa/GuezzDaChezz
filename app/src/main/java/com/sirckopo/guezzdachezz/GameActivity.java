@@ -43,8 +43,8 @@ public class GameActivity extends ActionBarActivity {
 
         updateScreenMetrics();
 
-        Toast.makeText(GameActivity.this, screenWidth + " " + screenHeight + " " + isLandscape,
-                Toast.LENGTH_LONG).show();
+        //Toast.makeText(GameActivity.this, screenWidth + " " + screenHeight + " " + isLandscape,
+        //        Toast.LENGTH_LONG).show();
 
         llBase = new LinearLayout(this);
         llBase.setOrientation(isLandscape ? LinearLayout.HORIZONTAL : LinearLayout.VERTICAL);
@@ -103,6 +103,16 @@ public class GameActivity extends ActionBarActivity {
         butHint.setText("Hint");
         llBar.addView(butHint, new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
                 LayoutParams.WRAP_CONTENT, 1));
+
+        llBase.post(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(GameActivity.this, screenWidth + " " + screenHeight + "\n" +
+                               llBase.getMeasuredWidth() + " " + llBase.getMeasuredHeight() + "\n" +
+                                tlChessboard.getMeasuredWidth() + " " + tlChessboard.getMeasuredHeight(),
+                        Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     /*
