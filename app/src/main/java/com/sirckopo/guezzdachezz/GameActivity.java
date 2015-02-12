@@ -61,7 +61,7 @@ public class GameActivity extends ActionBarActivity {
         tlChessboard.setBackgroundColor(Color.argb(255, 0, 255, 0));
         llBase.addView(tlChessboard, new LayoutParams(
                 isLandscape ? LayoutParams.WRAP_CONTENT : LayoutParams.MATCH_PARENT,
-                !isLandscape ? LayoutParams.MATCH_PARENT : LayoutParams.WRAP_CONTENT));
+                isLandscape ? LayoutParams.MATCH_PARENT : LayoutParams.WRAP_CONTENT));
 
         for (int j = 8; j > 0; j--) {
             TableRow trRank = new TableRow(this);
