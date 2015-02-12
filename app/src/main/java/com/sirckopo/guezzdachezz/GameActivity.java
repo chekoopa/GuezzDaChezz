@@ -85,6 +85,7 @@ public class GameActivity extends ActionBarActivity {
                 });
                 butSquare.setMinimumWidth(0);
                 butSquare.setMinimumHeight(0);
+                butSquare.setPadding(0, 0, 0, 0);
                 butSquares.add(butSquare);
                 trRank.addView(butSquare);
                 //trRank.addView(butSquare, new TableRow.LayoutParams(
