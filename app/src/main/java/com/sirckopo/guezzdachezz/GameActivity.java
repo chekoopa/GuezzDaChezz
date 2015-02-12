@@ -1,28 +1,108 @@
 package com.sirckopo.guezzdachezz;
 
+import android.graphics.Color;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Display;
+import android.view.View;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.Toast;
 
 
 public class GameActivity extends ActionBarActivity {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_game);
+    LinearLayout llBase;
+    LinearLayout llBar;
+    TableLayout tlChessboard;
 
-        // узнаем размеры экрана из класса Display
+    Button butReset;
+    Button butHint;
+
+    private int screenWidth;
+    private int screenHeight;
+    private boolean isLandscape;
+
+    private void updateScreenMetrics() {
         Display display = getWindowManager().getDefaultDisplay();
         DisplayMetrics metrics = new DisplayMetrics();
         display.getMetrics(metrics);
-        Toast.makeText(GameActivity.this, metrics.widthPixels + " " + metrics.heightPixels,
-                Toast.LENGTH_SHORT).show();
+        screenWidth = metrics.widthPixels;
+        screenHeight = metrics.heightPixels;
+        isLandscape = (screenWidth > screenHeight);
+    }
 
-        //findViewById(R.id.Chessboard).setMinimumWidth(Math.min(dispSize.x, dispSize.y));
-        //findViewById(R.id.Chessboard).setMinimumHeight(Math.min(dispSize.x, dispSize.y));
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        //setContentView(R.layout.activity_game);
+
+        updateScreenMetrics();
+
+        Toast.makeText(GameActivity.this, screenWidth + " " + screenHeight + " " + isLandscape,
+                Toast.LENGTH_LONG).show();
+
+        llBase = new LinearLayout(this);
+        llBase.setOrientation(isLandscape ? LinearLayout.HORIZONTAL : LinearLayout.VERTICAL);
+        setContentView(llBase, new LayoutParams(LayoutParams.MATCH_PARENT,
+                LayoutParams.MATCH_PARENT));
+
+        LinearLayout llTest = new LinearLayout(this);
+        llTest.setOrientation(!isLandscape ? LinearLayout.HORIZONTAL : LinearLayout.VERTICAL);
+        llTest.setBackgroundColor(Color.argb(255, 255, 0, 0));
+        llBase.addView(llTest);
+
+        tlChessboard = new TableLayout(this);
+        tlChessboard.setOrientation(TableLayout.VERTICAL);
+        tlChessboard.setBackgroundColor(Color.argb(255, 0, 255, 0));
+        llBase.addView(tlChessboard, new LayoutParams(
+                isLandscape ? LayoutParams.WRAP_CONTENT : LayoutParams.MATCH_PARENT,
+                !isLandscape ? LayoutParams.MATCH_PARENT : LayoutParams.WRAP_CONTENT));
+
+        for (int j = 8; j > 0; j--) {
+            TableRow trRank = new TableRow(this);
+            trRank.setOrientation(TableRow.HORIZONTAL);
+            tlChessboard.addView(trRank);
+            //tlChessboard.addView(trRank, new TableLayout.LayoutParams(
+            //        LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 1));
+
+            for (int i = 1; i <= 8; i++) {
+                Button butSquare = new Button(this);
+                butSquare.setText("");
+                butSquare.setTag((Integer) (i * 10 + j));
+                butSquare.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Button b =(Button) v;
+                        b.setText(v.getTag().toString());
+                    }
+                });
+                trRank.addView(butSquare);
+                //trRank.addView(butSquare, new TableRow.LayoutParams(
+                //        LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 1));
+
+            }
+        }
+
+
+        llBar = new LinearLayout(this);
+        llBar.setOrientation(!isLandscape ? LinearLayout.HORIZONTAL : LinearLayout.VERTICAL);
+        llBar.setBackgroundColor(Color.argb(255, 0, 0, 255));
+        llBase.addView(llBar);
+
+        butReset = new Button(this);
+        butReset.setText("Reset");
+        llBar.addView(butReset, new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
+                LayoutParams.WRAP_CONTENT, 1));
+
+        butHint = new Button(this);
+        butHint.setText("Hint");
+        llBar.addView(butHint, new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
+                LayoutParams.WRAP_CONTENT, 1));
     }
 
     /*
