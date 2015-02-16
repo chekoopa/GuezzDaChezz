@@ -148,8 +148,8 @@ public class GameActivity extends ActionBarActivity {
                 int butSize = (isLandscape ? tlChessboard.getMeasuredHeight() :
                         tlChessboard.getMeasuredWidth()) / 8;
                 for (Button b : butSquares) {
-                    b.setMaxWidth(butSize);
-                    b.setMaxHeight(butSize);
+                    b.setWidth(butSize);
+                    b.setHeight(butSize);
                     int code = (Integer)b.getTag();
                     b.setBackgroundColor(((code / 10 + code % 10) % 2 == 0) ?
                             Color.argb(128, 0, 0, 0) :
