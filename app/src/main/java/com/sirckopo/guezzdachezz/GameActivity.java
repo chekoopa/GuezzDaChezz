@@ -1,6 +1,8 @@
 package com.sirckopo.guezzdachezz;
 
+
 import android.graphics.Color;
+import android.graphics.Picture;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -8,10 +10,14 @@ import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.Toast;
+
+import com.larvalabs.svgandroid.SVG;
+import com.larvalabs.svgandroid.SVGBuilder;
 
 import java.util.LinkedList;
 
@@ -74,15 +80,15 @@ public class GameActivity extends ActionBarActivity {
 
             for (int i = 1; i <= 8; i++) {
                 Button butSquare = new Button(this);
-                butSquare.setText("");
+                //butSquare.setText("");
                 butSquare.setTag(i * 10 + j);
-                butSquare.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Button b = (Button) v;
-                        b.setText(v.getTag().toString());
-                    }
-                });
+                //butSquare.setOnClickListener(new View.OnClickListener() {
+                //    @Override
+                //    public void onClick(View v) {
+                //        Button b = (Button) v;
+                //        b.setText(v.getTag().toString());
+                //    }
+                //});
                 butSquare.setMinimumWidth(0);
                 butSquare.setMinimumHeight(0);
                 butSquare.setPadding(0, 0, 0, 0);
@@ -92,6 +98,14 @@ public class GameActivity extends ActionBarActivity {
                 //        LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 1));
 
             }
+
+            // Chess things
+            lMain.setup();
+            updateSquares();
+
+            SVGBuilder svgBuilder = new SVGBuilder();
+            svgBuilder.readFromResource(getResources(), R.raw.figure_wp);
+            svgWPawn = svgBuilder.build();
         }
 
 
@@ -105,9 +119,10 @@ public class GameActivity extends ActionBarActivity {
         butReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for (Button b : butSquares) {
-                    b.setText("");
-                }
+                butReset.setText("Nothing!");
+                //for (Button b : butSquares) {
+                    //b.image(URI)
+                //}
             }
         });
         llBar.addView(butReset, new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
@@ -133,8 +148,8 @@ public class GameActivity extends ActionBarActivity {
                 int butSize = (isLandscape ? tlChessboard.getMeasuredHeight() :
                         tlChessboard.getMeasuredWidth()) / 8;
                 for (Button b : butSquares) {
-                    b.setWidth(butSize);
-                    b.setHeight(butSize);
+                    b.setMaxWidth(butSize);
+                    b.setMaxHeight(butSize);
                     int code = (Integer)b.getTag();
                     b.setBackgroundColor(((code / 10 + code % 10) % 2 == 0) ?
                             Color.argb(128, 0, 0, 0) :
@@ -167,4 +182,23 @@ public class GameActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
     */
+
+    ChessLayout lMain = new ChessLayout();
+    SVG svgWPawn;
+    private void updateSquares() {
+        for (Button b: butSquares) {
+            int sq = (Integer) b.getTag();
+            int fig = lMain.getBoard(sq / 10, sq % 10);
+            if (fig == 0)
+                continue;
+            //if (fig == 1) {
+            //    Picture drPawn = svgWPawn.getPicture();
+            //    df
+            //    b.setImageBitmap();
+            //}
+            b.setText((fig / ChessLayout.fBlack == 1 ? "b" : "w") +
+                    ChessLayout.tFigures.charAt(fig % ChessLayout.fBlack));
+        }
+    }
+
 }
