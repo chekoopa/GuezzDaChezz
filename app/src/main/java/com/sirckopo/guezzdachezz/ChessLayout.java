@@ -88,7 +88,8 @@ public class ChessLayout {
 	
 	public int getBoard(int x, int y) {
 		if (!areXYOnBoard(x, y)) {
-			throw new IllegalArgumentException(); 
+			return 0;
+			//throw new IllegalArgumentException();
 		}
 		return board[x - 1][y - 1];
 	}
@@ -313,7 +314,7 @@ public class ChessLayout {
 		loadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	}
 	
-	private int getBoardFigure(int x, int y) {
+	public int getBoardFigure(int x, int y) {
 		return getBoard(x, y) % fBlack;
 	}
 	
@@ -416,6 +417,9 @@ public class ChessLayout {
 	}
 	
 	public boolean isPlaceable(int x, int y, boolean fmove) {
+        if (!areXYOnBoard(x, y)) {
+            return false;
+        }
 		if (getBoard(x, y) == fEmpty) // automatic wrong argument throw
 			return true;
 		if (getBoardFigure(x, y) == fKing)
@@ -428,7 +432,7 @@ public class ChessLayout {
 	
 	public boolean isChecked(int x, int y, boolean fmove) {
 		if (!areXYOnBoard(x, y)) {
-			throw new IllegalArgumentException(); 
+			throw new IllegalArgumentException("Wrong square " + x + " " + y);
 		}
 		for (short i = -1; i <= 1; i++) 
 			for (short j = -1; j <= 1; j++) {
@@ -486,7 +490,7 @@ public class ChessLayout {
 
 	public boolean isReachableNoPawn(int x, int y, boolean fmove) {
 		if (!areXYOnBoard(x, y)) {
-			throw new IllegalArgumentException(); 
+			return false;
 		}
 		short i = 0;
 		for(i=0; i<8; i++)
@@ -555,6 +559,13 @@ public class ChessLayout {
 	}
 
 	public boolean isCheckmate(boolean fmove) {
+        int[][] xboard = new int[size][size];
+        for (int i = 0; i < size; i++) {
+            xboard[i] = board[i].clone();
+        }
+        boolean xmove = move;
+        int[] xcastling = castling.clone();
+        int[] xenpassant = enpassant.clone();
 		if (!isCheck(fmove))
 			return false;
 		for (int x = 1; x <= size; x++) for (int y = 1; y <= size; y++) {
@@ -562,29 +573,43 @@ public class ChessLayout {
 			if (f != fEmpty && f / fBlack == (getMove() ? 1 : 0)) {
 				LinkedList<ChessMove> mbuf = moveBuffer(x, y);
 				for (ChessMove cm : mbuf)
-					if (doMove(cm))
-						return false;
+					if (doMove(cm)) {
+                        board = xboard;
+                        move = xmove;
+                        castling = xcastling;
+                        enpassant = xenpassant;
+                        return false;
+                    }
+
 			}
 		}
-		return false;
+		return true;
 	}
 	
 	public boolean isMoveCorrect(ChessMove m) {
-		// it's temporary maybe?
+		// it's temporary maybe? i really hate this workaround. :c
 		LinkedList<ChessMove> moves = moveBuffer(m.getCode(0), m.getCode(1));
-		return moves.contains(m);
-	}
+        for (ChessMove cm: moves)
+            if (m.isEqual(cm))
+                return true;
+		return false;
+    }
 	
 	public boolean doMove(ChessMove m) {
 		if (!isMoveCorrect(m)) {
-			throw new IllegalArgumentException("Incorrect move " + 
-					                           m.getString());
+			//throw new IllegalArgumentException("Incorrect move " +
+			//		                           m.getString());
+            //NOTE: let's try to make it less killing
+            return false;
 		}
-		
-		int[][] xboard = board;
+
+        int[][] xboard = new int[size][size];
+        for (int i = 0; i < size; i++) {
+            xboard[i] = board[i].clone();
+        }
 		boolean xmove = move;
-		int[] xcastling = castling;
-		int[] xenpassant = enpassant;
+		int[] xcastling = castling.clone();
+		int[] xenpassant = enpassant.clone();
 		
 		int[] mc = m.getCode();
 		
@@ -692,20 +717,20 @@ public class ChessLayout {
    			for(i=-1;i<=1;i++) for(short j=-1;j<=1;j++)
    				if (!(i == 0 && j == 0) && isPlaceable(x+i,y+j,move) &&
    						!isChecked(x+i, y+j, move)) {
-   					mbuf.push(new ChessMove(x, y, x, y + i));
+   					mbuf.push(new ChessMove(x, y, x+i, y+j));
    				}
    			// castling
    			if (castling[move ? 1 : 0] != 0 && !isChecked(x, y, move) &&
    					x == 5 && y == (move ? 8 : 1)) {
    				if (getQueenSideCastling(move) &&
-   					 getBoard(x-1, y) == fEmpty && isChecked(x-1, y, move) &&
-   					 getBoard(x-2, y) == fEmpty && isChecked(x-2, y, move) &&
+   					 getBoard(x-1, y) == fEmpty && !isChecked(x-1, y, move) &&
+   					 getBoard(x-2, y) == fEmpty && !isChecked(x-2, y, move) &&
    					 getBoard(x-3, y) == fEmpty) {
    					mbuf.push(new ChessMove(x, y, x - 2, y));
    				}
    				if (getKingSideCastling(move) &&
-   					 getBoard(x+1, y) == fEmpty && isChecked(x+1, y, move) &&
-      				 getBoard(x+2, y) == fEmpty && isChecked(x+2, y, move)) {
+   					 getBoard(x+1, y) == fEmpty && !isChecked(x+1, y, move) &&
+      				 getBoard(x+2, y) == fEmpty && !isChecked(x+2, y, move)) {
    					mbuf.push(new ChessMove(x, y, x + 2, y));
    				}
    			}

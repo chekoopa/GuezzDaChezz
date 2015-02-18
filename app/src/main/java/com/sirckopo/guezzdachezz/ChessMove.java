@@ -20,7 +20,7 @@ public class ChessMove {
 			!ChessLayout.areXYOnBoard(x, y)   ||
 			!(pr == 0 || ChessLayout.fKnight <= pr && ChessLayout.fQueen <= pr)
 			) {
-			throw new IllegalArgumentException(); 
+			throw new IllegalArgumentException("bad code " + xx + xy + x + y + pr);
 		}
 		xX = xx; xY = xy; X = x; Y = y; promotion = pr;
 	}
@@ -87,7 +87,15 @@ public class ChessMove {
 			throw new IllegalArgumentException();
 		}
 	}
-	
+
+    public boolean isEqual(ChessMove cm) {
+        if (cm == null) {
+            return false;
+        }
+        int[] c = cm.getCode();
+        return xX == c[0] && xY == c[1] && X == c[2] && Y == c[3] && promotion == c[4];
+    }
+
 	public void reset() {xX = 0; xY = 0; X = 0; Y = 0; promotion = 0;}
 	
 	private int xX = 0, xY = 0, X = 0, Y = 0, promotion = 0;

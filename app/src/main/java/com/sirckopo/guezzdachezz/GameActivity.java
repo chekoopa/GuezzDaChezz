@@ -14,6 +14,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.larvalabs.svgandroid.SVG;
@@ -30,6 +31,8 @@ public class GameActivity extends ActionBarActivity {
     LinkedList<Button> butSquares = new LinkedList<>();
     Button butReset;
     Button butHint;
+
+    TextView tvTester;
 
     private int screenWidth;
     private int screenHeight;
@@ -80,15 +83,13 @@ public class GameActivity extends ActionBarActivity {
 
             for (int i = 1; i <= 8; i++) {
                 Button butSquare = new Button(this);
-                //butSquare.setText("");
                 butSquare.setTag(i * 10 + j);
-                //butSquare.setOnClickListener(new View.OnClickListener() {
-                //    @Override
-                //    public void onClick(View v) {
-                //        Button b = (Button) v;
-                //        b.setText(v.getTag().toString());
-                //    }
-                //});
+                butSquare.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        squarePress(v);
+                    }
+                });
                 butSquare.setMinimumWidth(0);
                 butSquare.setMinimumHeight(0);
                 butSquare.setPadding(0, 0, 0, 0);
@@ -103,15 +104,14 @@ public class GameActivity extends ActionBarActivity {
             lMain.setup();
             updateSquares();
 
-            SVGBuilder svgBuilder = new SVGBuilder();
-            svgBuilder.readFromResource(getResources(), R.raw.figure_wp);
-            svgWPawn = svgBuilder.build();
+            //SVGBuilder svgBuilder = new SVGBuilder();
+            //svgBuilder.readFromResource(getResources(), R.raw.figure_wp);
+            //svgWPawn = svgBuilder.build();
         }
 
 
         llBar = new LinearLayout(this);
         llBar.setOrientation(!isLandscape ? LinearLayout.HORIZONTAL : LinearLayout.VERTICAL);
-        //llBar.setBackgroundColor(Color.argb(255, 0, 0, 255));
         llBase.addView(llBar);
 
         butReset = new Button(this);
@@ -119,10 +119,8 @@ public class GameActivity extends ActionBarActivity {
         butReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                butReset.setText("Nothing!");
-                //for (Button b : butSquares) {
-                    //b.image(URI)
-                //}
+                lMain.setup();
+                updateSquares();
             }
         });
         llBar.addView(butReset, new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
@@ -157,6 +155,11 @@ public class GameActivity extends ActionBarActivity {
                 }
             }
         });
+
+        tvTester = new TextView(this);
+        tvTester.setText("Chess engine status is right here. It's temporary, though.");
+        llBase.addView(tvTester, new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
+                LayoutParams.WRAP_CONTENT, 1));
     }
 
     /*
@@ -184,21 +187,126 @@ public class GameActivity extends ActionBarActivity {
     */
 
     ChessLayout lMain = new ChessLayout();
-    SVG svgWPawn;
+    final int STATE_WAIT = 0;
+    final int STATE_SQUARE = 1;
+    final int STATE_PROMOTION = 2;
+
+    int state = 0;
+    int sqx = 0;
+    int sqy = 0;
+    LinkedList<ChessMove> moveBuffer;
+
     private void updateSquares() {
+        //TODO: implement graphical representation
         for (Button b: butSquares) {
             int sq = (Integer) b.getTag();
             int fig = lMain.getBoard(sq / 10, sq % 10);
-            if (fig == 0)
+            if (fig == 0) {
+                b.setText("");
                 continue;
-            //if (fig == 1) {
-            //    Picture drPawn = svgWPawn.getPicture();
-            //    df
-            //    b.setImageBitmap();
-            //}
+            }
             b.setText((fig / ChessLayout.fBlack == 1 ? "b" : "w") +
                     ChessLayout.tFigures.charAt(fig % ChessLayout.fBlack));
         }
+    }
+
+    private void moveReset() {
+        state = 0;
+        sqx = 0;
+        sqy = 0;
+        moveBuffer = null;
+        for (Button b: butSquares) {
+            int code = (Integer) b.getTag();
+            b.setBackgroundColor(((code / 10 + code % 10) % 2 == 0) ?
+                    Color.argb(128, 0, 0, 0) :
+                    Color.argb(128, 255, 255, 255));
+        }
+    }
+
+    private void highlightMoveBuffer() {
+        for (ChessMove cm : moveBuffer) {
+            tlChessboard.findViewWithTag(cm.getCode(2) * 10 +
+                    cm.getCode(3)).setBackgroundColor((
+                    (cm.getCode(2) + cm.getCode(3)) % 2 == 0) ?
+                    Color.argb(192, 0, 0, 0) :
+                    Color.argb(192, 255, 255, 255));
+        }
+    }
+
+    private void squarePress(View v) {
+        int sq = (Integer) v.getTag();
+        switch (state) {
+            case STATE_WAIT:
+                int fig = lMain.getBoard(sq / 10, sq % 10);
+                if ( fig == 0 || fig / ChessLayout.fBlack !=
+                        (lMain.getMove()? 1 : 0)) {
+                    return;
+                }
+                moveBuffer = lMain.moveBuffer(sq / 10, sq % 10);
+                if (moveBuffer.isEmpty()) {
+                    moveBuffer = null;
+                    return;
+                }
+                sqx = sq;
+                highlightMoveBuffer();
+                state = STATE_SQUARE;
+                /**/String texst = "Waiting for a move, one of " + moveBuffer.size();
+                for (ChessMove cm: moveBuffer) {
+                    texst += " " + cm.getString();
+                }
+                tvTester.setText(texst);
+                break;
+            case STATE_SQUARE:
+                ChessMove desiredMove;
+                if (sq % 10 == (lMain.getMove() ? 8 : 1) &&
+                        lMain.getBoardFigure(sqx / 10, sqx % 10) == ChessLayout.fPawn) {
+                    // TODO: work it out with promotion
+                    desiredMove = new ChessMove(sqx / 10, sqx % 10, sq / 10, sq % 10,
+                            ChessLayout.fQueen);
+                } else
+                desiredMove = new ChessMove(sqx / 10, sqx % 10, sq / 10, sq % 10);
+                boolean isPossible = false;
+                for (ChessMove cm: moveBuffer) {
+                    if (desiredMove.isEqual(cm)) {
+                        isPossible = true;
+                        break;
+                    }
+                }
+                if (!isPossible) {
+                    tvTester.setText("No such move. " + desiredMove.getString());
+                    moveReset();
+                    updateSquares();
+                    if (lMain.getBoard(sq / 10, sq % 10) != 0) {
+                        state = STATE_WAIT;
+                        squarePress(v);
+                    }
+                    return;
+                }
+                if (lMain.doMove(desiredMove)) {
+                    /**/updateSquares();
+                    tvTester.setText("Move made! " + desiredMove.getString());
+                    if (lMain.isCheck(lMain.getMove())) {
+                        /**/updateSquares();
+                        tvTester.setText(tvTester.getText() + " Check!");
+                        if (lMain.isCheckmate(lMain.getMove())) {
+                            /**/updateSquares();
+                            tvTester.setText(tvTester.getText() + " And mate!");
+                        }
+                    }
+                } else {
+                    //TODO: (probably) 'king is still attacked' notification
+                    tvTester.setText("The king is still attacked! " + desiredMove.getString());
+                    //Toast.makeText(GameActivity.this, "The king is still under attack!",
+                    //        Toast.LENGTH_LONG).show();
+                }
+                updateSquares();
+                moveReset();
+                break;
+            case STATE_PROMOTION:
+                // TODO: yes, right here. promotion code.
+                break;
+        }
+
     }
 
 }
