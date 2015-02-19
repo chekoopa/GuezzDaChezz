@@ -32,7 +32,8 @@ public class GameActivity extends ActionBarActivity {
     LinkedList<Button> butSquares = new LinkedList<>();
     Button butReset;
     Button butHint;
-
+    Button butMoveIndicator;
+    
     TextView tvTester;
 
     private int screenWidth;
@@ -100,14 +101,6 @@ public class GameActivity extends ActionBarActivity {
                 //        LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 1));
 
             }
-
-            // Chess things
-            lMain.setup();
-            updateSquares();
-
-            //SVGBuilder svgBuilder = new SVGBuilder();
-            //svgBuilder.readFromResource(getResources(), R.raw.figure_wp);
-            //svgWPawn = svgBuilder.build();
         }
 
 
@@ -141,6 +134,11 @@ public class GameActivity extends ActionBarActivity {
         llBar.addView(butHint, new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
                 LayoutParams.WRAP_CONTENT, 1));
 
+        butMoveIndicator = new Button(this);
+        butMoveIndicator.setText("");
+        llBar.addView(butMoveIndicator, new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
+                LayoutParams.WRAP_CONTENT, 0.1f));
+
         llBase.post(new Runnable() {
             @Override
             public void run() {
@@ -162,6 +160,15 @@ public class GameActivity extends ActionBarActivity {
         tvTester.setText("Chess engine status is right here. It's temporary, though.");
         llBase.addView(tvTester, new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
                 LayoutParams.WRAP_CONTENT, 1));
+                
+                
+        // Chess things
+        lMain.setup();
+        updateSquares();
+
+        //SVGBuilder svgBuilder = new SVGBuilder();
+        //svgBuilder.readFromResource(getResources(), R.raw.figure_wp);
+        //svgWPawn = svgBuilder.build();
     }
 
     /*
@@ -214,6 +221,10 @@ public class GameActivity extends ActionBarActivity {
                     ChessLayout.tFiguresUnicodeB.charAt(fig % ChessLayout.fBlack) :
                     ChessLayout.tFiguresUnicodeW.charAt(fig % ChessLayout.fBlack)));
         }
+        // butMoveIndicator.setBackgroundColor(lMain.getMove() ?
+        //        Color.argb(196, 0, 0, 0) : Color.argb(195, 255, 255, 255));
+        butMoveIndicator.setText(String.valueOf((lMain.getMove() ? ChessLayout.tFiguresUnicodeB :
+                ChessLayout.tFiguresUnicodeW).charAt(ChessLayout.fKing)));
     }
 
     private void moveReset() {
