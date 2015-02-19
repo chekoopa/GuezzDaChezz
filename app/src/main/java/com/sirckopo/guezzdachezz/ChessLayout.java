@@ -56,6 +56,15 @@ public class ChessLayout {
 	 */
 	public static final String tFigures = " pNBRQK";
 	/**
+	 * Unicode white figure chars constant (to use with charAt)
+	 */
+	public static final String tFiguresUnicodeW = " ♙♘♗♖♕♔";
+	/**
+	 * Unicode black figure chars constant (to use with charAt)
+	 */
+	public static final String tFiguresUnicodeB = " ♟♞♝♜♛♚";
+
+	/**
 	 * Knight move offsets array constant
 	 */
 	public static final short[][] knightMove = {{-2,-1},{-2,1}, {-1,-2},{-1,2},
