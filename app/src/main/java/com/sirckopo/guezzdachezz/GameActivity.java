@@ -6,6 +6,7 @@ import android.graphics.Picture;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
@@ -148,6 +149,7 @@ public class GameActivity extends ActionBarActivity {
                 for (Button b : butSquares) {
                     b.setWidth(butSize);
                     b.setHeight(butSize);
+                    b.setTextSize(TypedValue.COMPLEX_UNIT_PX, butSize * 4 / 5);
                     int code = (Integer)b.getTag();
                     b.setBackgroundColor(((code / 10 + code % 10) % 2 == 0) ?
                             Color.argb(128, 0, 0, 0) :
@@ -197,7 +199,7 @@ public class GameActivity extends ActionBarActivity {
     LinkedList<ChessMove> moveBuffer;
 
     private void updateSquares() {
-        //TODO: implement graphical representation
+        //TODO: implement graphical representation (using SVG or PNG) ?
         for (Button b: butSquares) {
             int sq = (Integer) b.getTag();
             int fig = lMain.getBoard(sq / 10, sq % 10);
@@ -205,8 +207,12 @@ public class GameActivity extends ActionBarActivity {
                 b.setText("");
                 continue;
             }
-            b.setText((fig / ChessLayout.fBlack == 1 ? "b" : "w") +
-                    ChessLayout.tFigures.charAt(fig % ChessLayout.fBlack));
+            //plain style
+            //b.setText((fig / ChessLayout.fBlack == 1 ? "b" : "w") +
+            //        ChessLayout.tFigures.charAt(fig % ChessLayout.fBlack));
+            b.setText(String.valueOf(fig / ChessLayout.fBlack == 1 ?
+                    ChessLayout.tFiguresUnicodeB.charAt(fig % ChessLayout.fBlack) :
+                    ChessLayout.tFiguresUnicodeW.charAt(fig % ChessLayout.fBlack)));
         }
     }
 
