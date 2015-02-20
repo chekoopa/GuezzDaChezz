@@ -117,8 +117,8 @@ public class ChessLayout {
 	
 	public String getEnPassantSquare() {
 		String output = "";
-		output += (char)('a' - 1 + castling[0]);
-		output += (char)('0' + castling[1]);
+		output += (char)('a' - 1 + enpassant[0]);
+		output += (char)('0' + enpassant[1]);
 		return output;
 	}
 	
@@ -204,8 +204,8 @@ public class ChessLayout {
 	                if (fen.charAt(c) == '-') {
 	                    c++; phase++;
 	                } else {
-	                	castling[0] = fen.charAt(c) - 96;
-	                	castling[1] = fen.charAt(c+1) - '0';
+	                	enpassant[0] = fen.charAt(c) - 96;
+	                	enpassant[1] = fen.charAt(c+1) - '0';
 	                    c+=2; phase++;
 	                }
 	                break;
@@ -353,11 +353,13 @@ public class ChessLayout {
 			if (Math.abs(Y - xY) == 2) {
 				enpassant[0] = X; enpassant[1] = (move ? 6 : 3);
 			} else if (enpassant[0] == X && enpassant[1] == Y) {
-				setBoard(X, Y + (move ? -1 : 1), fEmpty);
+				setBoard(X, Y + (move ? 1 : -1), fEmpty);
 			}
 
 		}
-		
+
+        //TODO: castling bit changes on rook capture
+
 		if (enpassant[1] != (move ? 6 : 3)) {
 			enpassant = new int[2];
 		}
@@ -655,21 +657,21 @@ public class ChessLayout {
 				 fEmpty && getBoard(x, y + (move ? -2 : 2)) == fEmpty) {
 				mbuf.push(new ChessMove(x, y, x, y + (move ? -2 : 2)));
 			}
+            // TODO: make en-passant work
 			if (isPlaceable(x + 1, y + (move ? -1 : 1), move))
 				if (getBoard(x + 1, y + (move ? -1 : 1)) != fEmpty ||
-				    (x == castling[0] && y == castling[1])) {
+				    (x + 1 == enpassant[0] && y + (move ? -1 : 1) == enpassant[1])) {
 					mbuf.push(new ChessMove(x, y, x + 1, y + (move ? -1 : 1)));
 				}
 			if (isPlaceable(x - 1, y + (move ? -1 : 1), move))
 				if (getBoard(x - 1, y + (move ? -1 : 1)) != fEmpty ||
-				    (x == castling[0] && y == castling[1])) {
+				    (x - 1 == enpassant[0] && y + (move ? -1 : 1) == enpassant[1])) {
 					mbuf.push(new ChessMove(x, y, x - 1, y + (move ? -1 : 1)));
 				}
 			break;
    		case fKnight:
    			for (i = 0; i < 8; i++) {
-   				if (isPlaceable(x + knightMove[i][0], y + knightMove[i][1],
-   						move)) {
+   				if (isPlaceable(x + knightMove[i][0], y + knightMove[i][1], move)) {
    					mbuf.push(new ChessMove(x, y, x + knightMove[i][0],
    							y + knightMove[i][1]));
    				}

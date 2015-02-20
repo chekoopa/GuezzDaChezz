@@ -114,6 +114,7 @@ public class GameActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 lMain.setup();
+                moveReset();
                 updateSquares();
             }
         });
@@ -125,10 +126,11 @@ public class GameActivity extends ActionBarActivity {
         butHint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(GameActivity.this, screenWidth + " " + screenHeight + "\n" +
-                                llBase.getMeasuredWidth() + " " + llBase.getMeasuredHeight() + "\n" +
-                                tlChessboard.getMeasuredWidth() + " " + tlChessboard.getMeasuredHeight(),
-                        Toast.LENGTH_LONG).show();
+                tvTester.setText("No hints, take this: " + lMain.getFEN());
+                //Toast.makeText(GameActivity.this, screenWidth + " " + screenHeight + "\n" +
+                //                llBase.getMeasuredWidth() + " " + llBase.getMeasuredHeight() + "\n" +
+                //                tlChessboard.getMeasuredWidth() + " " + tlChessboard.getMeasuredHeight(),
+                //        Toast.LENGTH_LONG).show();
             }
         });
         llBar.addView(butHint, new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
@@ -163,12 +165,22 @@ public class GameActivity extends ActionBarActivity {
                 
                 
         // Chess things
-        lMain.setup();
+        if (savedInstanceState == null) {
+            lMain.setup();
+        } else {
+            lMain.loadFEN(savedInstanceState.getString("board"));
+        }
         updateSquares();
 
         //SVGBuilder svgBuilder = new SVGBuilder();
         //svgBuilder.readFromResource(getResources(), R.raw.figure_wp);
         //svgWPawn = svgBuilder.build();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("board", lMain.getFEN());
     }
 
     /*
