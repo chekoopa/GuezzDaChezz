@@ -18,7 +18,7 @@ public class ChessMove {
 	public void setCode(int xx, int xy, int x, int y, int pr) {
 		if (!ChessLayout.areXYOnBoard(xx, xy) || 
 			!ChessLayout.areXYOnBoard(x, y)   ||
-			!(pr == 0 || ChessLayout.fKnight <= pr && ChessLayout.fQueen <= pr)
+			!(pr == 0 || ChessLayout.fKnight <= pr && pr <= ChessLayout.fQueen)
 			) {
 			throw new IllegalArgumentException("bad code " + xx + xy + x + y + pr);
 		}

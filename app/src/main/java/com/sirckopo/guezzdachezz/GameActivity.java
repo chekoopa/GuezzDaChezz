@@ -114,6 +114,7 @@ public class GameActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 lMain.setup();
+                //lMain.loadFEN("8/5P2/8/k7/8/2K5/8/8 w - - 0 1");
                 moveReset();
                 updateSquares();
             }
@@ -127,10 +128,6 @@ public class GameActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 tvTester.setText("No hints, take this: " + lMain.getFEN());
-                //Toast.makeText(GameActivity.this, screenWidth + " " + screenHeight + "\n" +
-                //                llBase.getMeasuredWidth() + " " + llBase.getMeasuredHeight() + "\n" +
-                //                tlChessboard.getMeasuredWidth() + " " + tlChessboard.getMeasuredHeight(),
-                //        Toast.LENGTH_LONG).show();
             }
         });
         llBar.addView(butHint, new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
@@ -229,14 +226,12 @@ public class GameActivity extends ActionBarActivity {
             //plain style
             //b.setText((fig / ChessLayout.fBlack == 1 ? "b" : "w") +
             //        ChessLayout.tFigures.charAt(fig % ChessLayout.fBlack));
-            b.setText(String.valueOf(fig / ChessLayout.fBlack == 1 ?
-                    ChessLayout.tFiguresUnicodeB.charAt(fig % ChessLayout.fBlack) :
-                    ChessLayout.tFiguresUnicodeW.charAt(fig % ChessLayout.fBlack)));
+            b.setText(ChessLayout.getUnicodeCharString(fig));
         }
         // butMoveIndicator.setBackgroundColor(lMain.getMove() ?
         //        Color.argb(196, 0, 0, 0) : Color.argb(195, 255, 255, 255));
-        butMoveIndicator.setText(String.valueOf((lMain.getMove() ? ChessLayout.tFiguresUnicodeB :
-                ChessLayout.tFiguresUnicodeW).charAt(ChessLayout.fKing)));
+        butMoveIndicator.setText(ChessLayout.getUnicodeCharString(ChessLayout.fKing +
+                (lMain.getMove() ? ChessLayout.fBlack : 0)));
     }
 
     private void moveReset() {
@@ -286,22 +281,26 @@ public class GameActivity extends ActionBarActivity {
                 tvTester.setText(texst);
                 break;
             case STATE_SQUARE:
-                ChessMove desiredMove;
-                if (sq % 10 == (lMain.getMove() ? 8 : 1) &&
-                        lMain.getBoardFigure(sqx / 10, sqx % 10) == ChessLayout.fPawn) {
-                    // TODO: work it out with promotion
-                    desiredMove = new ChessMove(sqx / 10, sqx % 10, sq / 10, sq % 10,
-                            ChessLayout.fQueen);
-                } else
-                desiredMove = new ChessMove(sqx / 10, sqx % 10, sq / 10, sq % 10);
-                boolean isPossible = false;
-                for (ChessMove cm: moveBuffer) {
-                    if (desiredMove.isEqual(cm)) {
-                        isPossible = true;
-                        break;
+                if (sq % 10 == (lMain.getMove() ? 1 : 8) &&
+                     lMain.getBoardFigure(sqx / 10, sqx % 10) == ChessLayout.fPawn) {
+                    ChessMove desiredMove = new ChessMove(sqx / 10, sqx % 10, sq / 10, sq % 10);
+                    if (!isInMoveBuffer(desiredMove)) {
+                        tvTester.setText("No such move. " + desiredMove.getString());
+                        moveReset();
+                        updateSquares();
+                        if (lMain.getBoard(sq / 10, sq % 10) != 0) {
+                            state = STATE_WAIT;
+                            squarePress(v);
+                        }
+                        return;
                     }
+                    state = STATE_PROMOTION;
+                    showPromotionScreen();
+                    sqy = sq;
+                    return;
                 }
-                if (!isPossible) {
+                ChessMove desiredMove = new ChessMove(sqx / 10, sqx % 10, sq / 10, sq % 10);
+                if (!isInMoveBuffer(desiredMove)) {
                     tvTester.setText("No such move. " + desiredMove.getString());
                     moveReset();
                     updateSquares();
@@ -312,30 +311,80 @@ public class GameActivity extends ActionBarActivity {
                     return;
                 }
                 if (lMain.doMove(desiredMove)) {
-                    /**/updateSquares();
-                    tvTester.setText("Move made! " + desiredMove.getString());
-                    if (lMain.isCheck(lMain.getMove())) {
-                        /**/updateSquares();
-                        tvTester.setText(tvTester.getText() + " Check!");
-                        if (lMain.isCheckmate(lMain.getMove())) {
-                            /**/updateSquares();
-                            tvTester.setText(tvTester.getText() + " And mate!");
-                        }
-                    }
-                } else {
-                    //TODO: (probably) 'king is still attacked' notification
-                    tvTester.setText("The king is still attacked! " + desiredMove.getString());
-                    //Toast.makeText(GameActivity.this, "The king is still under attack!",
-                    //        Toast.LENGTH_LONG).show();
-                }
+                    warnMoveResult(desiredMove);
+                } else warnKingIsStillAttacked(desiredMove);
                 updateSquares();
                 moveReset();
                 break;
             case STATE_PROMOTION:
-                // TODO: yes, right here. promotion code.
+                int newfig = 0;
+                switch (sq) {
+                    case 35: newfig = ChessLayout.fKnight; break;
+                    case 45: newfig = ChessLayout.fBishop; break;
+                    case 55: newfig = ChessLayout.fRook; break;
+                    case 65: newfig = ChessLayout.fQueen; break;
+                }
+                if (newfig != 0) {
+                    desiredMove = new ChessMove(sqx / 10, sqx % 10, sqy / 10, sqy % 10);
+                    if (lMain.doMove(desiredMove)) {
+                        lMain.setBoard(sqy / 10, sqy % 10, newfig);
+                        warnMoveResult(desiredMove);
+                    } else warnKingIsStillAttacked(desiredMove);
+                }
+                updateSquares();
+                moveReset();
                 break;
         }
 
+    }
+
+    private void warnKingIsStillAttacked(ChessMove cm) {
+        //TODO: (probably) 'king is still attacked' notification
+        tvTester.setText("The king is still attacked! " + cm.getString());
+        //Toast.makeText(GameActivity.this, "The king is still under attack!",
+        //        Toast.LENGTH_LONG).show();
+    }
+
+    private void warnMoveResult(ChessMove cm) {
+        tvTester.setText("Move made! " + cm.getString());
+        if (lMain.isCheck(lMain.getMove())) {
+                        /**/updateSquares();
+            tvTester.setText(tvTester.getText() + " Check!");
+            if (lMain.isCheckmate(lMain.getMove())) {
+                            /**/updateSquares();
+                tvTester.setText(tvTester.getText() + " And mate!");
+            }
+        }
+    }
+
+    private void showPromotionScreen() {
+        ((TextView) tlChessboard.findViewWithTag(35)).setText(
+                ChessLayout.getUnicodeCharString(ChessLayout.fKnight +
+                        (lMain.getMove() ? ChessLayout.fBlack : 0)));
+        ((TextView) tlChessboard.findViewWithTag(45)).setText(
+                ChessLayout.getUnicodeCharString(ChessLayout.fBishop +
+                        (lMain.getMove() ? ChessLayout.fBlack : 0)));
+        ((TextView) tlChessboard.findViewWithTag(55)).setText(
+                ChessLayout.getUnicodeCharString(ChessLayout.fRook +
+                        (lMain.getMove() ? ChessLayout.fBlack : 0)));
+        ((TextView) tlChessboard.findViewWithTag(65)).setText(
+                ChessLayout.getUnicodeCharString(ChessLayout.fQueen +
+                        (lMain.getMove() ? ChessLayout.fBlack : 0)));
+        tlChessboard.findViewWithTag(35).setBackgroundColor(
+                Color.argb(128, 128, 128, 128));
+        tlChessboard.findViewWithTag(45).setBackgroundColor(
+                Color.argb(128, 128, 128, 128));
+        tlChessboard.findViewWithTag(55).setBackgroundColor(
+                Color.argb(128, 128, 128, 128));
+        tlChessboard.findViewWithTag(65).setBackgroundColor(
+                Color.argb(128, 128, 128, 128));
+    }
+
+    private boolean isInMoveBuffer(ChessMove desm) {
+        for (ChessMove cm: moveBuffer)
+            if (desm.isEqual(cm))
+                return true;
+        return false;
     }
 
 }

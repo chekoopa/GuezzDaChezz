@@ -70,7 +70,12 @@ public class ChessLayout {
 	public static final short[][] knightMove = {{-2,-1},{-2,1}, {-1,-2},{-1,2},
                                                 { 1,-2},{ 1,2}, { 2,-1},{ 2,1}};
 
-	/**
+    public static String getUnicodeCharString(int fig) {
+        return String.valueOf(fig / fBlack == 1 ? tFiguresUnicodeB.charAt(fig % fBlack) :
+                tFiguresUnicodeW.charAt(fig % fBlack));
+    }
+
+ 	/**
 	 * Checks whether a coordinate pair is within a board.
 	 * @param x X coordinate
 	 * @param y Y coordinate
@@ -143,6 +148,7 @@ public class ChessLayout {
 	}
 
 	public boolean loadFEN(String fen) {
+        reset();
 	    boolean done = false;
 	    int phase = 0;
 	    int x = 1, y = 8;
@@ -319,7 +325,6 @@ public class ChessLayout {
 	}
 	
 	public void setup() {
-		reset();
 		loadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	}
 	
