@@ -52,12 +52,8 @@ public class GameActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_game);
 
         updateScreenMetrics();
-
-        //Toast.makeText(GameActivity.this, screenWidth + " " + screenHeight + " " + isLandscape,
-        //        Toast.LENGTH_LONG).show();
 
         llBase = new LinearLayout(this);
         llBase.setOrientation(isLandscape ? LinearLayout.HORIZONTAL : LinearLayout.VERTICAL);
@@ -66,7 +62,6 @@ public class GameActivity extends ActionBarActivity {
 
         LinearLayout llTest = new LinearLayout(this);
         llTest.setOrientation(!isLandscape ? LinearLayout.HORIZONTAL : LinearLayout.VERTICAL);
-        //llTest.setBackgroundColor(Color.argb(255, 255, 0, 0));
         llBase.addView(llTest);
 
         tlChessboard = new TableLayout(this);
@@ -80,8 +75,6 @@ public class GameActivity extends ActionBarActivity {
             TableRow trRank = new TableRow(this);
             trRank.setOrientation(TableRow.HORIZONTAL);
             tlChessboard.addView(trRank);
-            //tlChessboard.addView(trRank, new TableLayout.LayoutParams(
-            //        LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 1));
 
             for (int i = 1; i <= 8; i++) {
                 Button butSquare = new Button(this);
@@ -92,14 +85,11 @@ public class GameActivity extends ActionBarActivity {
                         squarePress(v);
                     }
                 });
-                butSquare.setMinimumWidth(0);
-                butSquare.setMinimumHeight(0);
+                butSquare.setMinimumWidth(1);
+                butSquare.setMinimumHeight(1);
                 butSquare.setPadding(0, 0, 0, 0);
                 butSquares.add(butSquare);
                 trRank.addView(butSquare);
-                //trRank.addView(butSquare, new TableRow.LayoutParams(
-                //        LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 1));
-
             }
         }
 
@@ -142,7 +132,7 @@ public class GameActivity extends ActionBarActivity {
             @Override
             public void run() {
                 int butSize = (isLandscape ? tlChessboard.getMeasuredHeight() :
-                        tlChessboard.getMeasuredWidth()) / 8;
+                        tlChessboard.getMeasuredWidth()) / 8 + 1;
                 for (Button b : butSquares) {
                     b.setWidth(butSize);
                     b.setHeight(butSize);
@@ -168,10 +158,6 @@ public class GameActivity extends ActionBarActivity {
             lMain.loadFEN(savedInstanceState.getString("board"));
         }
         updateSquares();
-
-        //SVGBuilder svgBuilder = new SVGBuilder();
-        //svgBuilder.readFromResource(getResources(), R.raw.figure_wp);
-        //svgWPawn = svgBuilder.build();
     }
 
     @Override
@@ -179,30 +165,6 @@ public class GameActivity extends ActionBarActivity {
         super.onSaveInstanceState(outState);
         outState.putString("board", lMain.getFEN());
     }
-
-    /*
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_game, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-    */
 
     ChessLayout lMain = new ChessLayout();
     final int STATE_WAIT = 0;
@@ -228,8 +190,6 @@ public class GameActivity extends ActionBarActivity {
             //        ChessLayout.tFigures.charAt(fig % ChessLayout.fBlack));
             b.setText(ChessLayout.getUnicodeCharString(fig));
         }
-        // butMoveIndicator.setBackgroundColor(lMain.getMove() ?
-        //        Color.argb(196, 0, 0, 0) : Color.argb(195, 255, 255, 255));
         butMoveIndicator.setText(ChessLayout.getUnicodeCharString(ChessLayout.fKing +
                 (lMain.getMove() ? ChessLayout.fBlack : 0)));
     }
