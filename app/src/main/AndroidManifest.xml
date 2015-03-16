@@ -22,10 +22,6 @@
             android:label="@string/title_activity_game"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" >
         </activity>
-        <activity
-            android:name=".Puzzle"
-            android:label="@string/title_activity_puzzle" >
-        </activity>
     </application>
 
 </manifest>

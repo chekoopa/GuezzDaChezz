@@ -12,9 +12,39 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Button"
-        android:id="@+id/button"
+        android:text="Just a game"
+        android:id="@+id/butGame"
         android:layout_below="@+id/textView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:onClick="sendToGame" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Testing Layout"
+        android:id="@+id/butTestLay"
+        android:layout_below="@+id/butGame"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:onClick="sendToGame" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="One-mover"
+        android:id="@+id/butOneMove"
+        android:layout_below="@+id/butTestLay"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:onClick="sendToGame" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Two-mover"
+        android:id="@+id/butTwoMove"
+        android:layout_below="@+id/butOneMove"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:onClick="sendToGame" />

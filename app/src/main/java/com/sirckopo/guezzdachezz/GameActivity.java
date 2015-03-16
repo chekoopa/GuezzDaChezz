@@ -1,6 +1,7 @@
 package com.sirckopo.guezzdachezz;
 
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Picture;
 import android.support.v7.app.ActionBarActivity;
@@ -103,8 +104,7 @@ public class GameActivity extends ActionBarActivity {
         butReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                lMain.setup();
-                //lMain.loadFEN("8/5P2/8/k7/8/2K5/8/8 w - - 0 1");
+                lMain.loadFEN(baseFEN);
                 moveReset();
                 updateSquares();
             }
@@ -152,8 +152,12 @@ public class GameActivity extends ActionBarActivity {
                 
                 
         // Chess things
+        Intent intent = getIntent();
+        baseFEN = intent.getStringExtra("fen");
+        //solutions = intent.getExtra("sol");
+
         if (savedInstanceState == null) {
-            lMain.setup();
+            lMain.loadFEN(baseFEN);
         } else {
             lMain.loadFEN(savedInstanceState.getString("board"));
         }
@@ -167,6 +171,14 @@ public class GameActivity extends ActionBarActivity {
     }
 
     ChessLayout lMain = new ChessLayout();
+
+    String baseFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1 #1";
+    ChessMove[][] solutions = {};
+
+    // String baseFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    // ChessMove[] solutions = {};
+    // "8/5P2/8/k7/8/2K5/8/8 w - - 0 1"
+
     final int STATE_WAIT = 0;
     final int STATE_SQUARE = 1;
     final int STATE_PROMOTION = 2;
@@ -177,7 +189,7 @@ public class GameActivity extends ActionBarActivity {
     LinkedList<ChessMove> moveBuffer;
 
     private void updateSquares() {
-        //TODO: implement graphical representation (using SVG or PNG) ?
+        //TODO: implement fancier graphical representation (using SVG or PNG) ?
         for (Button b: butSquares) {
             int sq = (Integer) b.getTag();
             int fig = lMain.getBoard(sq / 10, sq % 10);

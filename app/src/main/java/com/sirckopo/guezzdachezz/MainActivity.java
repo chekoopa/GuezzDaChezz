@@ -41,6 +41,22 @@ public class MainActivity extends ActionBarActivity {
 
     public void sendToGame(View v) {
         Intent intent = new Intent(this, GameActivity.class);
+        switch (v.getId()) {
+            case R.id.butGame:
+                intent.putExtra("fen", ChessLayout.startLayout);
+                break;
+            case R.id.butOneMove:
+                intent.putExtra("fen", ChessLayout.startLayout);
+                break;
+            case R.id.butTwoMove:
+                intent.putExtra("fen", ChessLayout.startLayout);
+                break;
+            case R.id.butTestLay:
+                intent.putExtra("fen", "8/5P2/8/k7/8/2K5/8/8 w - - 0 1");
+                break;
+        }
+        // ChessMove[][] sol = {{new ChessMove("e2e4"), null}};
+        // intent.putExtra("solutions", );
         startActivity(intent);
     }
 }

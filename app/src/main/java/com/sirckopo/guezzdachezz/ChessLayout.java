@@ -63,7 +63,11 @@ public class ChessLayout {
 	 * Unicode black figure chars constant (to use with charAt)
 	 */
 	public static final String tFiguresUnicodeB = " ♟♞♝♜♛♚";
-
+    /**
+     * Starting layout FEN record.
+     */
+    public static final String startLayout =
+            "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 	/**
 	 * Knight move offsets array constant
 	 */
@@ -325,7 +329,7 @@ public class ChessLayout {
 	}
 	
 	public void setup() {
-		loadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+		loadFEN(startLayout);
 	}
 	
 	public int getBoardFigure(int x, int y) {
