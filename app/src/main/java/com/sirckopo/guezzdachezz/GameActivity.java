@@ -19,9 +19,6 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.larvalabs.svgandroid.SVG;
-import com.larvalabs.svgandroid.SVGBuilder;
-
 import java.util.LinkedList;
 
 
