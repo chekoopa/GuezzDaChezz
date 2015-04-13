@@ -2,6 +2,7 @@ package com.sirckopo.guezzdachezz;
 
 
 import android.content.Intent;
+import android.database.SQLException;
 import android.graphics.Color;
 import android.graphics.Picture;
 import android.support.v7.app.ActionBarActivity;
@@ -19,6 +20,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.LinkedList;
 
 
@@ -91,7 +93,6 @@ public class GameActivity extends ActionBarActivity {
             }
         }
 
-
         llBar = new LinearLayout(this);
         llBar.setOrientation(!isLandscape ? LinearLayout.HORIZONTAL : LinearLayout.VERTICAL);
         llBase.addView(llBar);
@@ -146,12 +147,31 @@ public class GameActivity extends ActionBarActivity {
         tvTester.setText("Chess engine status is right here. It's temporary, though.");
         llBase.addView(tvTester, new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
                 LayoutParams.WRAP_CONTENT, 1));
-                
-                
+
+        try {
+            layoutStorage.createDataBase();
+            layoutStorage.overrideDataBase();
+        } catch (IOException ioe) {
+            throw new Error("Unable to create database");
+        }
+
+        try {
+            layoutStorage.openDataBase();
+        } catch(SQLException sqle) {
+            throw sqle;
+        }
+
         // Chess things
         Intent intent = getIntent();
-        baseFEN = intent.getStringExtra("fen");
-        //solutions = intent.getExtra("sol");
+        problemSet = intent.getStringExtra("set");
+        currentId = intent.getIntExtra("id", 0);
+
+        if (problemSet == null) {
+            baseFEN = (intent.getStringExtra("fen") == null ? ChessLayout.startLayout :
+                    intent.getStringExtra("fen"));
+        } else {
+            getProblem();
+        }
 
         if (savedInstanceState == null) {
             lMain.loadFEN(baseFEN);
@@ -167,14 +187,15 @@ public class GameActivity extends ActionBarActivity {
         outState.putString("board", lMain.getFEN());
     }
 
+    LayoutStorage layoutStorage = new LayoutStorage(this);
+
     ChessLayout lMain = new ChessLayout();
 
     String baseFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1 #1";
-    ChessMove[][] solutions = {};
+    String problemSet = "";
+    int currentId = 0;
 
-    // String baseFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-    // ChessMove[] solutions = {};
-    // "8/5P2/8/k7/8/2K5/8/8 w - - 0 1"
+    ChessMove[][] solutions = {};
 
     final int STATE_WAIT = 0;
     final int STATE_SQUARE = 1;
@@ -184,6 +205,24 @@ public class GameActivity extends ActionBarActivity {
     int sqx = 0;
     int sqy = 0;
     LinkedList<ChessMove> moveBuffer;
+
+    private void getProblem() {
+        String[] problem = layoutStorage.getProblem(problemSet, currentId);
+        if (problem == null) {
+            tvTester.setText("No more problems left, folks!");
+            // shall we get away?
+            return;
+        }
+        baseFEN = problem[0];
+        String[] sol = problem[1].split(" ");
+        solutions = new ChessMove[sol.length][2];
+        for (int i = 0; i < sol.length; i++) {
+            solutions[i][0] = new ChessMove(sol[i]);
+        }
+        tvTester.setText("Problem " + String.valueOf(currentId));
+
+        updateSquares();
+    }
 
     private void updateSquares() {
         //TODO: implement fancier graphical representation (using SVG or PNG) ?
@@ -296,7 +335,8 @@ public class GameActivity extends ActionBarActivity {
                 if (newfig != 0) {
                     desiredMove = new ChessMove(sqx / 10, sqx % 10, sqy / 10, sqy % 10);
                     if (lMain.doMove(desiredMove)) {
-                        lMain.setBoard(sqy / 10, sqy % 10, newfig);
+                        lMain.setBoard(sqy / 10, sqy % 10, newfig +
+                                        (lMain.getMove() ? 0 : ChessLayout.fBlack));
                         warnMoveResult(desiredMove);
                     } else warnKingIsStillAttacked(desiredMove);
                 }

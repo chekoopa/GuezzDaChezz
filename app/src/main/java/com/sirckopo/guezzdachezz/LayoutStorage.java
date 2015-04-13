@@ -38,11 +38,18 @@ public class LayoutStorage extends SQLiteOpenHelper {
         boolean dbExist = checkDataBase();
         if (!dbExist){
             this.getReadableDatabase();
-            try {
-                copyDataBase();
-            } catch (IOException e) {
-                throw new Error("Error copying database");
-            }
+            overrideDataBase();
+        }
+    }
+
+    /**
+     * Перезаписывает базу данных нашей собственной базой
+     * */
+    public void overrideDataBase() throws IOException{
+        try {
+            copyDataBase();
+        } catch (IOException e) {
+            throw new Error("Error copying database");
         }
     }
 
@@ -93,7 +100,6 @@ public class LayoutStorage extends SQLiteOpenHelper {
     }
 
     public void openDataBase() throws SQLException {
-        //открываем БД
         String myPath = DB_PATH + DB_NAME;
         myDataBase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
     }
@@ -111,20 +117,25 @@ public class LayoutStorage extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
     }
 
-    public String[] getLayout(String set, int id) {
+    public String[] getProblem(String set, int id) {
         String query = "SELECT " + "fen, solutions, answers FROM " + set + " WHERE id='" +
                          String.valueOf(id) + "'";
         Cursor cursor =  this.myDataBase.rawQuery(query, null);
 
         if (cursor.getCount() == 0) {
+            cursor.close();
             return null;
         }
         cursor.moveToFirst();
-        return new String[] {cursor.getString(cursor.getColumnIndex("fen")),
+        String[] problem = new String[] {cursor.getString(cursor.getColumnIndex("fen")),
                 cursor.getString(cursor.getColumnIndex("solutions")),
                 cursor.getString(cursor.getColumnIndex("answers"))};
+        cursor.close();
+
+        return problem;
     }
 
 }

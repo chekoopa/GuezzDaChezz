@@ -470,12 +470,12 @@ public class ChessLayout {
 			throw new IllegalArgumentException(); 
 		}
 		// pawn
-		if (areXYOnBoard(x + 1, y + (fmove ? 1 : -1)))
-			if (getBoard(x + 1, y + (fmove ? 1 : -1)) == 
+		if (areXYOnBoard(x + 1, y + (!fmove ? 1 : -1)))
+			if (getBoard(x + 1, y + (!fmove ? 1 : -1)) ==
 			     fPawn + (fmove ? 0 : fBlack))
 				return true;
-		if (areXYOnBoard(x - 1, y + (fmove ? 1 : -1)))
-			if (getBoard(x - 1, y + (fmove ? 1 : -1)) == 
+		if (areXYOnBoard(x - 1, y + (!fmove ? 1 : -1)))
+			if (getBoard(x - 1, y + (!fmove ? 1 : -1)) ==
 			     fPawn + (fmove ? 0 : fBlack))
 				return true;
 		return isReachableNoPawn(x, y, !fmove);
@@ -492,17 +492,22 @@ public class ChessLayout {
 			throw new IllegalArgumentException(); 
 		}
 		// pawn
-		if (areXYOnBoard(x + 1, y + (fmove ? -1 : 1)))
-			if (getBoard(x + 1, y + (fmove ? -1 : 1)) == 
+		/* if (areXYOnBoard(x + 1, y + (!fmove ? -1 : 1)))
+			if (getBoard(x + 1, y + (!fmove ? -1 : 1)) ==
 			     fPawn + (fmove ? fBlack : 0))
 				return true;
+        if (areXYOnBoard(x - 1, y + (!fmove ? -1 : 1)))
+			if (getBoard(x - 1, y + (!fmove ? -1 : 1)) ==
+			     fPawn + (fmove ? fBlack : 0))
+				return true;
+        */
 
-	    if (areXYOnBoard(x, y + (fmove ? -1 : 1)))
-	        if (getBoard(x, y + (fmove ? -1 : 1)) == 
+	    if (areXYOnBoard(x, y + (!fmove ? -1 : 1)))
+	        if (getBoard(x, y + (!fmove ? -1 : 1)) ==
 	             fPawn + (fmove ? fBlack : 0))
 	            return true;
 	    if (y == (fmove ? 4 : 5))
-	        if (getBoard(x, y + (fmove ? -2 : 2)) == 
+	        if (getBoard(x, y + (!fmove ? -2 : 2)) ==
 				 fPawn + (fmove ? fBlack : 0))
 	            return true;
 	    return isReachableNoPawn(x, y, fmove);

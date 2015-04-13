@@ -43,10 +43,11 @@ public class MainActivity extends ActionBarActivity {
         Intent intent = new Intent(this, GameActivity.class);
         switch (v.getId()) {
             case R.id.butGame:
-                intent.putExtra("fen", ChessLayout.startLayout);
+                intent.putExtra("id", 0);
                 break;
             case R.id.butOneMove:
-                intent.putExtra("fen", ChessLayout.startLayout);
+                intent.putExtra("set", "onemove_1");
+                intent.putExtra("id", 1);
                 break;
             case R.id.butTwoMove:
                 intent.putExtra("fen", ChessLayout.startLayout);
