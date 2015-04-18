@@ -23,6 +23,7 @@ import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -35,7 +36,7 @@ public class GameActivity extends ActionBarActivity {
     LinkedList<Button> butSquares = new LinkedList<>();
     
     MenuItem miMoveIndicator;
-    TextView tvTester;
+    MenuItem miHint;
 
     private int screenWidth;
     private int screenHeight;
@@ -105,6 +106,7 @@ public class GameActivity extends ActionBarActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_game, menu);
         miMoveIndicator = menu.findItem(R.id.action_king);
+        miHint = menu.findItem(R.id.action_hint);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -179,9 +181,6 @@ public class GameActivity extends ActionBarActivity {
             }
         });
 
-        //TODO: deal with status bar (more fancy indications!)
-        tvTester = new TextView(this);
-        tvTester.setText("Chess engine status is right here. It's temporary, though.");
         //llBase.addView(tvTester, new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
         //        LayoutParams.WRAP_CONTENT, 1));
     }
@@ -211,9 +210,11 @@ public class GameActivity extends ActionBarActivity {
 
         String[] problem = layoutStorage.getProblem(problemSet, currentId);
         if (problem == null) {
-            tvTester.setText("No more problems left, folks!");
             // shall we get away?
-            tvTester.setText(tvTester.getText() + " So you can reset the problem and freeplay it.");
+            //TODO: fancy final grats screen
+            Toast.makeText(getApplicationContext(), "No problems left, folks! Feel free to " +
+                    "reset the problem and freeplay it", Toast.LENGTH_LONG).show();
+            updateSquares();
             // we shall, but for while we have this
             return;
         }
@@ -223,7 +224,8 @@ public class GameActivity extends ActionBarActivity {
         for (int i = 0; i < sol.length; i++) {
             solutions[i][0] = new ChessMove(sol[i]);
         }
-        tvTester.setText("Problem " + String.valueOf(currentId));
+        //TODO: display problem number?
+        //tvTester.setText("Problem " + String.valueOf(currentId));
 
         updateSquares();
     }
@@ -235,22 +237,21 @@ public class GameActivity extends ActionBarActivity {
     }
 
     private void makeHint() {
-        if (solutions == null || solutions.length == 0) {
-            tvTester.setText("No hints, take this: " + lMain.getFEN());
+        if (solutions == null || solutions.length == 0)
             return;
-        }
         int i = (int) Math.floor(Math.random() * solutions.length);
         int fig = lMain.getBoardFigure(solutions[i][0].getCode(0), solutions[i][0].getCode(1));
-        tvTester.setText("Well, you shall try a ");
+        String hint = "Well, you shall try a ";
         switch (fig) {
-            case ChessLayout.fPawn: tvTester.setText(tvTester.getText() + "pawn"); break;
-            case ChessLayout.fKnight: tvTester.setText(tvTester.getText() + "knight"); break;
-            case ChessLayout.fBishop: tvTester.setText(tvTester.getText() + "bishop"); break;
-            case ChessLayout.fRook: tvTester.setText(tvTester.getText() + "rook"); break;
-            case ChessLayout.fQueen: tvTester.setText(tvTester.getText() + "queen"); break;
-            case ChessLayout.fKing: tvTester.setText(tvTester.getText() + "king"); break;
+            case ChessLayout.fPawn: hint += "pawn"; break;
+            case ChessLayout.fKnight: hint += "knight"; break;
+            case ChessLayout.fBishop: hint += "bishop"; break;
+            case ChessLayout.fRook: hint += "rook"; break;
+            case ChessLayout.fQueen: hint += "queen"; break;
+            case ChessLayout.fKing: hint += "king"; break;
         }
-        tvTester.setText(tvTester.getText() + ". Is it enough for you?");
+        hint += ". Is it enough for you?";
+        Toast.makeText(getApplicationContext(), hint, Toast.LENGTH_LONG).show();
     }
 
     private void updateSquares() {
@@ -274,6 +275,8 @@ public class GameActivity extends ActionBarActivity {
                          (lMain.getMove() ? ChessLayout.fBlack : 0)) +
                          (lMain.getMove() ? getString(R.string.chess_black) :
                                             getString(R.string.chess_white)));
+        if (miHint != null)
+            miHint.setVisible(solutions != null && solutions.length != 0);
     }
 
     private void moveReset() {
@@ -301,7 +304,9 @@ public class GameActivity extends ActionBarActivity {
 
     private void squarePress(View v) {
         if (lMain.isCheckmate(lMain.getMove())) {
-            tvTester.setText("Uh-uh-uh, the game is already over.");
+            //TODO: game over nudge
+            Toast.makeText(getApplicationContext(), "Uh-uh-uh, the game is already over.",
+                    Toast.LENGTH_SHORT).show();
             return;
         }
         int sq = (Integer) v.getTag();
@@ -320,18 +325,18 @@ public class GameActivity extends ActionBarActivity {
                 sqx = sq;
                 highlightMoveBuffer();
                 state = STATE_SQUARE;
-                /**/String texst = "Waiting for a move, one of " + moveBuffer.size();
-                for (ChessMove cm: moveBuffer) {
-                    texst += " " + cm.getString();
-                }
-                tvTester.setText(texst);
+                ///**/String texst = "Waiting for a move, one of " + moveBuffer.size();
+                //for (ChessMove cm: moveBuffer) {
+                //    texst += " " + cm.getString();
+                //}
+                //tvTester.setText(texst);
                 break;
             case STATE_SQUARE:
+                //TODO: unite promotion and plain move codes
                 if (sq % 10 == (lMain.getMove() ? 1 : 8) &&
                      lMain.getBoardFigure(sqx / 10, sqx % 10) == ChessLayout.fPawn) {
                     ChessMove desiredMove = new ChessMove(sqx / 10, sqx % 10, sq / 10, sq % 10);
                     if (!isInMoveBuffer(desiredMove)) {
-                        tvTester.setText("No such move. " + desiredMove.getString());
                         moveReset();
                         updateSquares();
                         if (lMain.getBoard(sq / 10, sq % 10) != 0) {
@@ -347,7 +352,6 @@ public class GameActivity extends ActionBarActivity {
                 }
                 ChessMove desiredMove = new ChessMove(sqx / 10, sqx % 10, sq / 10, sq % 10);
                 if (!isInMoveBuffer(desiredMove)) {
-                    tvTester.setText("No such move. " + desiredMove.getString());
                     moveReset();
                     updateSquares();
                     if (lMain.getBoard(sq / 10, sq % 10) != 0) {
@@ -386,34 +390,38 @@ public class GameActivity extends ActionBarActivity {
     }
 
     private void warnKingIsStillAttacked(ChessMove cm) {
-        //TODO: (probably) 'king is still attacked' notification
-        tvTester.setText("The king is still attacked! " + cm.getString());
-        //Toast.makeText(GameActivity.this, "The king is still under attack!",
-        //        Toast.LENGTH_LONG).show();
+        //TODO: 'king is still attacked' notification (a nudge?)
+        Toast.makeText(getApplicationContext(), "The king is still under attack!",
+                Toast.LENGTH_SHORT).show();
     }
 
     private void warnMoveResult(ChessMove cm) {
-        tvTester.setText("Move made! " + cm.getString());
-        if (lMain.isCheck(lMain.getMove())) {
-            // updateSquares();
-            tvTester.setText(tvTester.getText() + " Check!");
-            if (lMain.isCheckmate(lMain.getMove())) {
-                // updateSquares();
-                tvTester.setText(tvTester.getText() + " And mate!");
+        //tvTester.setText("Move made! " + cm.getString());
+        if (solutions == null || solutions.length == 0) { // just check for a check/mate
+            if (lMain.isCheck(lMain.getMove())) {
+                //TODO: fancier nudge for a check/mate?
+                if (lMain.isCheckmate(lMain.getMove()))
+                    Toast.makeText(getApplicationContext(), "Checkmate!!!",
+                            Toast.LENGTH_LONG).show();
+                else
+                    Toast.makeText(getApplicationContext(), "Check!",
+                            Toast.LENGTH_SHORT).show();
             }
+            return;
         }
-        if (solutions == null) return; // when we don't need to check solutions
-        if (solutions.length == 0) return;
+
         for (int i = 0; i < solutions.length; i++) {
             if (solutions[i][0].isEqual(cm)) {
-                tvTester.setText(tvTester.getText() + "\nOh well, the problem is solved!");
+                //TODO: fancier "solved!" greeting?
+                Toast.makeText(getApplicationContext(), "Right move! Good job!",
+                        Toast.LENGTH_LONG).show();
                 delayLevelUp();
                 return;
             }
         }
-        // but if don't get a right solution, we'll have to reset a board
-        tvTester.setText(tvTester.getText() + "\nBut that's not a solution!");
-        // TODO: get enemy side to make a defensive move if on wrong try
+        Toast.makeText(getApplicationContext(), "Wrong! Think again.",
+                Toast.LENGTH_SHORT).show();
+        // TODO: get enemy side to make a defensive move if on wrong try (or a little nudge)
         delayReset();
     }
 
