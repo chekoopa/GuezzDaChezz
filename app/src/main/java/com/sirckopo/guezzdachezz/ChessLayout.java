@@ -367,7 +367,7 @@ public class ChessLayout {
 
 		}
 
-        //TODO: castling bit changes on rook capture
+        // implementing castling bit changes on rook capture is no need. Just in case.
 
 		if (enpassant[1] != (move ? 6 : 3)) {
 			enpassant = new int[2];

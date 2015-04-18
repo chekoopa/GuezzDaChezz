@@ -357,10 +357,10 @@ public class GameActivity extends ActionBarActivity {
     private void warnMoveResult(ChessMove cm) {
         tvTester.setText("Move made! " + cm.getString());
         if (lMain.isCheck(lMain.getMove())) {
-                        /**/updateSquares();
+            // updateSquares();
             tvTester.setText(tvTester.getText() + " Check!");
             if (lMain.isCheckmate(lMain.getMove())) {
-                            /**/updateSquares();
+                // updateSquares();
                 tvTester.setText(tvTester.getText() + " And mate!");
             }
         }
