@@ -4,24 +4,25 @@ package com.sirckopo.guezzdachezz;
 import android.content.Intent;
 import android.database.SQLException;
 import android.graphics.Color;
-import android.graphics.Picture;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.LayoutDirection;
 import android.util.TypedValue;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -29,7 +30,7 @@ import java.util.LinkedList;
 
 public class GameActivity extends ActionBarActivity {
 
-    LinearLayout llBase;
+    RelativeLayout llBase;
     TableLayout tlChessboard;
     LinkedList<Button> butSquares = new LinkedList<>();
     
@@ -125,21 +126,19 @@ public class GameActivity extends ActionBarActivity {
     private void makeLayout() {
         updateScreenMetrics();
 
-        llBase = new LinearLayout(this);
-        llBase.setOrientation(isLandscape ? LinearLayout.HORIZONTAL : LinearLayout.VERTICAL);
+        llBase = new RelativeLayout(this);
         setContentView(llBase, new LayoutParams(LayoutParams.MATCH_PARENT,
                 LayoutParams.MATCH_PARENT));
-
-        LinearLayout llTest = new LinearLayout(this);
-        llTest.setOrientation(!isLandscape ? LinearLayout.HORIZONTAL : LinearLayout.VERTICAL);
-        llBase.addView(llTest);
 
         tlChessboard = new TableLayout(this);
         tlChessboard.setOrientation(TableLayout.VERTICAL);
         tlChessboard.setBackgroundColor(Color.argb(255, 0, 255, 0));
-        llBase.addView(tlChessboard, new LayoutParams(
+
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                 isLandscape ? LayoutParams.WRAP_CONTENT : LayoutParams.MATCH_PARENT,
-                isLandscape ? LayoutParams.MATCH_PARENT : LayoutParams.WRAP_CONTENT));
+                isLandscape ? LayoutParams.MATCH_PARENT : LayoutParams.WRAP_CONTENT);
+        params.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+        llBase.addView(tlChessboard, params);
 
         for (int j = 8; j > 0; j--) {
             TableRow trRank = new TableRow(this);
@@ -180,10 +179,11 @@ public class GameActivity extends ActionBarActivity {
             }
         });
 
+        //TODO: deal with status bar (more fancy indications!)
         tvTester = new TextView(this);
         tvTester.setText("Chess engine status is right here. It's temporary, though.");
-        llBase.addView(tvTester, new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
-                LayoutParams.WRAP_CONTENT, 1));
+        //llBase.addView(tvTester, new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
+        //        LayoutParams.WRAP_CONTENT, 1));
     }
 
     LayoutStorage layoutStorage = new LayoutStorage(this);
