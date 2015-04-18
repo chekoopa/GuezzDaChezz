@@ -53,6 +53,46 @@ public class GameActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // all the dynamic layout magic is right here
+        makeLayout();
+
+        try {
+            layoutStorage.createDataBase();
+            layoutStorage.overrideDataBase();
+            layoutStorage.openDataBase();
+        } catch (IOException ioe) {
+            throw new Error("Unable to create database");
+        } catch(SQLException sqle) {
+            throw sqle;
+        }
+
+        // Chess things
+        Intent intent = getIntent();
+        problemSet = intent.getStringExtra("set");
+        currentId = intent.getIntExtra("id", 0);
+
+        if (problemSet == null) {
+            baseFEN = (intent.getStringExtra("fen") == null ? ChessLayout.startLayout :
+                    intent.getStringExtra("fen"));
+        } else {
+            getProblem();
+        }
+
+        if (savedInstanceState == null) {
+            lMain.loadFEN(baseFEN);
+        } else {
+            lMain.loadFEN(savedInstanceState.getString("board"));
+        }
+        updateSquares();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("board", lMain.getFEN());
+    }
+
+    private void makeLayout() {
         updateScreenMetrics();
 
         llBase = new LinearLayout(this);
@@ -98,24 +138,21 @@ public class GameActivity extends ActionBarActivity {
         llBase.addView(llBar);
 
         butReset = new Button(this);
-        butReset.setText("Reset");
+        butReset.setText("↺ Reset");
         butReset.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                lMain.loadFEN(baseFEN);
-                moveReset();
-                updateSquares();
+            public void onClick(View v) {resetLayout();
             }
         });
         llBar.addView(butReset, new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
                 LayoutParams.WRAP_CONTENT, 1));
 
         butHint = new Button(this);
-        butHint.setText("Hint");
+        butHint.setText("💡 Hint");
         butHint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tvTester.setText("No hints, take this: " + lMain.getFEN());
+                makeHint();
             }
         });
         llBar.addView(butHint, new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
@@ -147,44 +184,6 @@ public class GameActivity extends ActionBarActivity {
         tvTester.setText("Chess engine status is right here. It's temporary, though.");
         llBase.addView(tvTester, new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
                 LayoutParams.WRAP_CONTENT, 1));
-
-        try {
-            layoutStorage.createDataBase();
-            layoutStorage.overrideDataBase();
-        } catch (IOException ioe) {
-            throw new Error("Unable to create database");
-        }
-
-        try {
-            layoutStorage.openDataBase();
-        } catch(SQLException sqle) {
-            throw sqle;
-        }
-
-        // Chess things
-        Intent intent = getIntent();
-        problemSet = intent.getStringExtra("set");
-        currentId = intent.getIntExtra("id", 0);
-
-        if (problemSet == null) {
-            baseFEN = (intent.getStringExtra("fen") == null ? ChessLayout.startLayout :
-                    intent.getStringExtra("fen"));
-        } else {
-            getProblem();
-        }
-
-        if (savedInstanceState == null) {
-            lMain.loadFEN(baseFEN);
-        } else {
-            lMain.loadFEN(savedInstanceState.getString("board"));
-        }
-        updateSquares();
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putString("board", lMain.getFEN());
     }
 
     LayoutStorage layoutStorage = new LayoutStorage(this);
@@ -207,10 +206,15 @@ public class GameActivity extends ActionBarActivity {
     LinkedList<ChessMove> moveBuffer;
 
     private void getProblem() {
+        // just to transform a current problem into a plain layout
+        solutions = null;
+
         String[] problem = layoutStorage.getProblem(problemSet, currentId);
         if (problem == null) {
             tvTester.setText("No more problems left, folks!");
             // shall we get away?
+            tvTester.setText(tvTester.getText() + " So you can reset the problem and freeplay it.");
+            // we shall, but for while we have this
             return;
         }
         baseFEN = problem[0];
@@ -222,6 +226,31 @@ public class GameActivity extends ActionBarActivity {
         tvTester.setText("Problem " + String.valueOf(currentId));
 
         updateSquares();
+    }
+
+    private void resetLayout() {
+        lMain.loadFEN(baseFEN);
+        moveReset();
+        updateSquares();
+    }
+
+    private void makeHint() {
+        if (solutions == null || (solutions != null && solutions.length == 0)) {
+            tvTester.setText("No hints, take this: " + lMain.getFEN());
+            return;
+        }
+        int i = (int) Math.floor(Math.random() * solutions.length);
+        int fig = lMain.getBoardFigure(solutions[i][0].getCode(0), solutions[i][0].getCode(1));
+        tvTester.setText("Well, you shall try a ");
+        switch (fig) {
+            case ChessLayout.fPawn: tvTester.setText(tvTester.getText() + "pawn"); break;
+            case ChessLayout.fKnight: tvTester.setText(tvTester.getText() + "knight"); break;
+            case ChessLayout.fBishop: tvTester.setText(tvTester.getText() + "bishop"); break;
+            case ChessLayout.fRook: tvTester.setText(tvTester.getText() + "rook"); break;
+            case ChessLayout.fQueen: tvTester.setText(tvTester.getText() + "queen"); break;
+            case ChessLayout.fKing: tvTester.setText(tvTester.getText() + "king"); break;
+        }
+        tvTester.setText(tvTester.getText() + ". Is it enough for you?");
     }
 
     private void updateSquares() {
@@ -266,6 +295,10 @@ public class GameActivity extends ActionBarActivity {
     }
 
     private void squarePress(View v) {
+        if (lMain.isCheckmate(lMain.getMove())) {
+            tvTester.setText("Uh-uh-uh, the game is already over.");
+            return;
+        }
         int sq = (Integer) v.getTag();
         switch (state) {
             case STATE_WAIT:
@@ -364,6 +397,19 @@ public class GameActivity extends ActionBarActivity {
                 tvTester.setText(tvTester.getText() + " And mate!");
             }
         }
+        if (solutions == null) return; // when we don't need to check solutions
+        if (solutions.length == 0) return;
+        for (int i = 0; i < solutions.length; i++) {
+            if (solutions[i][0].isEqual(cm)) {
+                tvTester.setText(tvTester.getText() + "\nOh well, the problem is solved!");
+                delayLevelUp();
+                return;
+            }
+        }
+        // but if don't get a right solution, we'll have to reset a board
+        tvTester.setText(tvTester.getText() + "\nBut that's not a solution!");
+        // TODO: get enemy side to make a defensive move if on wrong try
+        delayReset();
     }
 
     private void showPromotionScreen() {
@@ -396,4 +442,22 @@ public class GameActivity extends ActionBarActivity {
         return false;
     }
 
+    private void delayLevelUp() {
+        llBase.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                currentId += 1;
+                getProblem();
+            }
+        }, 500);
+    }
+
+    private void delayReset() {
+        llBase.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                resetLayout();
+            }
+        }, 500);
+    }
 }
