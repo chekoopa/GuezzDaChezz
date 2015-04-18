@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -60,13 +61,13 @@ public class LayoutStorage extends SQLiteOpenHelper {
     private boolean checkDataBase(){
         SQLiteDatabase checkDB = null;
 
-        try{
+        try {
             String myPath = DB_PATH + DB_NAME;
             checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
-        }catch(SQLiteException e){
+        } catch(SQLiteException e){
             //база еще не существует
         }
-        if(checkDB != null){
+        if (checkDB != null){
             checkDB.close();
         }
         return (checkDB != null);
@@ -121,7 +122,7 @@ public class LayoutStorage extends SQLiteOpenHelper {
     }
 
     public String[] getProblem(String set, int id) {
-        String query = "SELECT " + "fen, solutions, answers FROM " + set + " WHERE id='" +
+        String query = "SELECT " + "fen, solutions, answers FROM " + set + " WHERE _id='" +
                          String.valueOf(id) + "'";
         Cursor cursor =  this.myDataBase.rawQuery(query, null);
 
