@@ -10,6 +10,9 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Display;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
@@ -27,13 +30,10 @@ import java.util.LinkedList;
 public class GameActivity extends ActionBarActivity {
 
     LinearLayout llBase;
-    LinearLayout llBar;
     TableLayout tlChessboard;
     LinkedList<Button> butSquares = new LinkedList<>();
-    Button butReset;
-    Button butHint;
-    Button butMoveIndicator;
     
+    MenuItem miMoveIndicator;
     TextView tvTester;
 
     private int screenWidth;
@@ -83,13 +83,43 @@ public class GameActivity extends ActionBarActivity {
         } else {
             lMain.loadFEN(savedInstanceState.getString("board"));
         }
-        updateSquares();
+        llBase.post(new Runnable() {
+            @Override
+            public void run() {
+                updateSquares();
+            }
+        });
+
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString("board", lMain.getFEN());
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu items for use in the action bar
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_game, menu);
+        miMoveIndicator = menu.findItem(R.id.action_king);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case R.id.action_hint:
+                makeHint();
+                return true;
+            case R.id.action_reset:
+                resetLayout();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void makeLayout() {
@@ -132,36 +162,6 @@ public class GameActivity extends ActionBarActivity {
                 trRank.addView(butSquare);
             }
         }
-
-        llBar = new LinearLayout(this);
-        llBar.setOrientation(!isLandscape ? LinearLayout.HORIZONTAL : LinearLayout.VERTICAL);
-        llBase.addView(llBar);
-
-        butReset = new Button(this);
-        butReset.setText("↺ Reset");
-        butReset.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {resetLayout();
-            }
-        });
-        llBar.addView(butReset, new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
-                LayoutParams.WRAP_CONTENT, 1));
-
-        butHint = new Button(this);
-        butHint.setText("💡 Hint");
-        butHint.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                makeHint();
-            }
-        });
-        llBar.addView(butHint, new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
-                LayoutParams.WRAP_CONTENT, 1));
-
-        butMoveIndicator = new Button(this);
-        butMoveIndicator.setText("");
-        llBar.addView(butMoveIndicator, new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
-                LayoutParams.WRAP_CONTENT, 0.1f));
 
         llBase.post(new Runnable() {
             @Override
@@ -235,7 +235,7 @@ public class GameActivity extends ActionBarActivity {
     }
 
     private void makeHint() {
-        if (solutions == null || (solutions != null && solutions.length == 0)) {
+        if (solutions == null || solutions.length == 0) {
             tvTester.setText("No hints, take this: " + lMain.getFEN());
             return;
         }
@@ -267,8 +267,13 @@ public class GameActivity extends ActionBarActivity {
             //        ChessLayout.tFigures.charAt(fig % ChessLayout.fBlack));
             b.setText(ChessLayout.getUnicodeCharString(fig));
         }
-        butMoveIndicator.setText(ChessLayout.getUnicodeCharString(ChessLayout.fKing +
-                (lMain.getMove() ? ChessLayout.fBlack : 0)));
+        //butMoveIndicator.setText(ChessLayout.getUnicodeCharString(ChessLayout.fKing +
+        //        (lMain.getMove() ? ChessLayout.fBlack : 0)));
+        if (miMoveIndicator != null)
+          miMoveIndicator.setTitle(ChessLayout.getUnicodeCharString(ChessLayout.fKing +
+                         (lMain.getMove() ? ChessLayout.fBlack : 0)) +
+                         (lMain.getMove() ? getString(R.string.chess_black) :
+                                            getString(R.string.chess_white)));
     }
 
     private void moveReset() {

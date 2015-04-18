@@ -2,6 +2,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.sirckopo.guezzdachezz.GameActivity">
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
-        android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/action_king"
+        android:title="@string/chess_white"
+        app:showAsAction="ifRoom|withText" />
+    <item android:id="@+id/action_hint"
+        android:icon="@drawable/ic_action_help"
+        android:title="@string/action_hint"
+        app:showAsAction="ifRoom" />
+    <item android:id="@+id/action_reset"
+        android:icon="@drawable/ic_action_refresh"
+        android:title="@string/action_reset"
+        app:showAsAction="ifRoom" />
+
+    <!-- <item android:id="@+id/action_settings" android:title="@string/action_settings"
+        android:orderInCategory="100" app:showAsAction="never" /> -->
 </menu>
