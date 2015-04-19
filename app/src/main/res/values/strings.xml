@@ -9,5 +9,7 @@
     <string name="action_reset">Reset</string>
     <string name="chess_white">White</string>
     <string name="chess_black">Black</string>
+    <string name="action_freeplay">Freeplay</string>
+    <string name="status_freeplay">Freeplay</string>
 
 </resources>

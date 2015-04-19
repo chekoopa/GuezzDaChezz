@@ -6,19 +6,15 @@ import android.database.SQLException;
 import android.graphics.Color;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.LayoutDirection;
 import android.util.TypedValue;
 import android.view.Display;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -37,6 +33,9 @@ public class GameActivity extends ActionBarActivity {
     
     MenuItem miMoveIndicator;
     MenuItem miHint;
+    MenuItem miLevelIndicator;
+    MenuItem miReset;
+    MenuItem miFreeplay;
 
     private int screenWidth;
     private int screenHeight;
@@ -64,8 +63,6 @@ public class GameActivity extends ActionBarActivity {
             layoutStorage.openDataBase();
         } catch (IOException ioe) {
             throw new Error("Unable to create database");
-        } catch(SQLException sqle) {
-            throw sqle;
         }
 
         // Chess things
@@ -107,6 +104,9 @@ public class GameActivity extends ActionBarActivity {
         inflater.inflate(R.menu.menu_game, menu);
         miMoveIndicator = menu.findItem(R.id.action_king);
         miHint = menu.findItem(R.id.action_hint);
+        miLevelIndicator = menu.findItem(R.id.action_level);
+        miReset = menu.findItem(R.id.action_reset);
+        miFreeplay = menu.findItem(R.id.action_freeplay);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -120,6 +120,10 @@ public class GameActivity extends ActionBarActivity {
             case R.id.action_reset:
                 resetLayout();
                 return true;
+            case R.id.action_freeplay:
+                Intent intent = new Intent(this, GameActivity.class);
+                intent.putExtra("fen", baseFEN);
+                startActivity(intent);
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -212,9 +216,10 @@ public class GameActivity extends ActionBarActivity {
         if (problem == null) {
             // shall we get away?
             //TODO: fancy final grats screen
-            Toast.makeText(getApplicationContext(), "No problems left, folks! Feel free to " +
-                    "reset the problem and freeplay it", Toast.LENGTH_LONG).show();
-            updateSquares();
+            Toast.makeText(getApplicationContext(), "That's all, folks! Feel free to " +
+                    "freeplay the last problem", Toast.LENGTH_LONG).show();
+            currentId = 0;
+            resetLayout();
             // we shall, but for while we have this
             return;
         }
@@ -268,15 +273,20 @@ public class GameActivity extends ActionBarActivity {
             //        ChessLayout.tFigures.charAt(fig % ChessLayout.fBlack));
             b.setText(ChessLayout.getUnicodeCharString(fig));
         }
-        //butMoveIndicator.setText(ChessLayout.getUnicodeCharString(ChessLayout.fKing +
-        //        (lMain.getMove() ? ChessLayout.fBlack : 0)));
         if (miMoveIndicator != null)
-          miMoveIndicator.setTitle(ChessLayout.getUnicodeCharString(ChessLayout.fKing +
-                         (lMain.getMove() ? ChessLayout.fBlack : 0)) +
-                         (lMain.getMove() ? getString(R.string.chess_black) :
-                                            getString(R.string.chess_white)));
+            miMoveIndicator.setTitle(ChessLayout.getUnicodeCharString(ChessLayout.fKing +
+                           (lMain.getMove() ? ChessLayout.fBlack : 0)) +
+                           (lMain.getMove() ? getString(R.string.chess_black) :
+                                              getString(R.string.chess_white)));
         if (miHint != null)
             miHint.setVisible(solutions != null && solutions.length != 0);
+        if (miLevelIndicator != null)
+            miLevelIndicator.setTitle(currentId != 0 ? String.valueOf(currentId) :
+                                          getString(R.string.status_freeplay));
+        if (miReset != null)
+            miReset.setVisible(solutions == null || solutions.length == 0);
+        if (miFreeplay != null)
+            miFreeplay.setVisible(solutions != null && solutions.length != 0);
     }
 
     private void moveReset() {
@@ -410,8 +420,8 @@ public class GameActivity extends ActionBarActivity {
             return;
         }
 
-        for (int i = 0; i < solutions.length; i++) {
-            if (solutions[i][0].isEqual(cm)) {
+        for (ChessMove[] solution : solutions) {
+            if (solution[0].isEqual(cm)) {
                 //TODO: fancier "solved!" greeting?
                 Toast.makeText(getApplicationContext(), "Right move! Good job!",
                         Toast.LENGTH_LONG).show();

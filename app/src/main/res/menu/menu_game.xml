@@ -1,18 +1,27 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.sirckopo.guezzdachezz.GameActivity">
-    <item android:id="@+id/action_king"
-        android:title="@string/chess_white"
-        app:showAsAction="ifRoom|withText" />
+    tools:context="com.sirckopo.guezzdachezz.GameActivity"
+    tools:ignore="AlwaysShowAction" > <!-- Sorry, I have to do it 'cause of that strange hiding -->
+    <item android:id="@+id/action_level"
+        android:title=""
+        app:showAsAction="always|withText" />
     <item android:id="@+id/action_hint"
         android:icon="@drawable/ic_action_help"
         android:title="@string/action_hint"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
+    <item android:id="@+id/action_freeplay"
+        android:icon="@drawable/ic_action_play_over_video"
+        android:title="@string/action_freeplay"
+        app:showAsAction="always" />
     <item android:id="@+id/action_reset"
         android:icon="@drawable/ic_action_refresh"
         android:title="@string/action_reset"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
+    <item android:id="@+id/action_king"
+        android:title="@string/chess_white"
+        app:showAsAction="always|withText" />
+
 
     <!-- <item android:id="@+id/action_settings" android:title="@string/action_settings"
         android:orderInCategory="100" app:showAsAction="never" /> -->
