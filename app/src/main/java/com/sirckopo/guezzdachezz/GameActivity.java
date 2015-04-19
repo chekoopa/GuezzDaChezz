@@ -228,10 +228,8 @@ public class GameActivity extends ActionBarActivity {
         for (int i = 0; i < sol.length; i++) {
             solutions[i][0] = new ChessMove(sol[i]);
         }
-        //TODO: display problem number?
-        //tvTester.setText("Problem " + String.valueOf(currentId));
 
-        updateSquares();
+        resetLayout();
     }
 
     private void resetLayout() {
