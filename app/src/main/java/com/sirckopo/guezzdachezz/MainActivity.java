@@ -61,7 +61,7 @@ public class MainActivity extends ActionBarActivity {
             case R.id.butOneMove:
                 if (findViewById(R.id.texLevelSelect) == null) return;
                 TextView tw = (TextView) findViewById(R.id.texLevelSelect);
-                int id = Integer.decode(tw.getText().toString());
+                int id = Integer.parseInt(tw.getText().toString());
                 int setSize = layoutStorage.getSize("onemove_1");
                 if (id < 1) id = 1;
                 if (id > setSize) id = setSize;
