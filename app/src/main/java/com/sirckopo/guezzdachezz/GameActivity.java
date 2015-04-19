@@ -58,7 +58,6 @@ public class GameActivity extends ActionBarActivity {
 
         try {
             layoutStorage.createDataBase();
-            layoutStorage.overrideDataBase();
             layoutStorage.openDataBase();
         } catch (IOException ioe) {
             throw new Error("Unable to create database");
@@ -213,13 +212,9 @@ public class GameActivity extends ActionBarActivity {
 
         String[] problem = layoutStorage.getProblem(problemSet, currentId);
         if (problem == null) {
-            // shall we get away?
             //TODO: fancy final grats screen
-            Toast.makeText(getApplicationContext(), "That's all, folks! Feel free to " +
-                    "freeplay the last problem", Toast.LENGTH_LONG).show();
-            currentId = 0;
-            resetLayout();
-            // we shall, but for while we have this
+            Toast.makeText(getApplicationContext(), "That's all, folks!", Toast.LENGTH_LONG).show();
+            finish();
             return;
         }
         baseFEN = problem[0];
@@ -386,7 +381,9 @@ public class GameActivity extends ActionBarActivity {
                     if (lMain.doMove(desiredMove)) {
                         lMain.setBoard(sqy / 10, sqy % 10, newfig +
                                         (lMain.getMove() ? 0 : ChessLayout.fBlack));
-                        warnMoveResult(desiredMove);
+                        ChessMove prettyMove = new ChessMove(sqx / 10, sqx % 10, sqy / 10, sqy % 10,
+                                                             newfig);
+                        warnMoveResult(prettyMove);
                     } else warnKingIsStillAttacked(desiredMove);
                 }
                 updateSquares();

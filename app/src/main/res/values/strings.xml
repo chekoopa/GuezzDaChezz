@@ -11,5 +11,9 @@
     <string name="chess_black">Black</string>
     <string name="action_freeplay">Freeplay</string>
     <string name="status_freeplay">Freeplay</string>
+    <string name="dialog_select_board">Select the board number</string>
+    <string name="go">Go!</string>
+    <string name="cancel">Cancel</string>
+    <string name="title_activity_board_select">Board Select</string>
 
 </resources>

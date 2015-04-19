@@ -73,13 +73,13 @@ public class ChessMove {
 				s = s.substring(0, 2) + s.substring(3);
 		}
 		if (s.length() == 5) {
-			if (!ChessLayout.tFigures.contains(
+			if (!ChessLayout.tFigures.toLowerCase().contains(
 					String.valueOf(s.charAt(4)))){
 				throw new IllegalArgumentException();
 			}
 			setCode(s.charAt(0) - 'a' + 1, s.charAt(1) - '0', 
 					s.charAt(2) - 'a' + 1, s.charAt(3) - '0',
-					ChessLayout.tFigures.indexOf(s.charAt(4))); 
+					ChessLayout.tFigures.toLowerCase().indexOf(s.charAt(4)));
 		} else if (s.length() == 4 ) {
 			setCode(s.charAt(0) - 'a' + 1, s.charAt(1) - '0', 
 					s.charAt(2) - 'a' + 1, s.charAt(3) - '0'); 

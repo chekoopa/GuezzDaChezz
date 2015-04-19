@@ -2,14 +2,11 @@ package com.sirckopo.guezzdachezz;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseErrorHandler;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -139,4 +136,18 @@ public class LayoutStorage extends SQLiteOpenHelper {
         return problem;
     }
 
+    public int getSize(String set) {
+        String query =  "SELECT count() FROM " + set;
+        Cursor cursor =  this.myDataBase.rawQuery(query, null);
+
+        if (cursor.getCount() == 0) {
+            cursor.close();
+            return 0;
+        }
+        cursor.moveToFirst();
+        int size = Integer.decode(cursor.getString(0));
+        cursor.close();
+
+        return size;
+    }
 }

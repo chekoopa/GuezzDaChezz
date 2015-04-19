@@ -6,14 +6,27 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
+
+import java.io.IOException;
 
 
 public class MainActivity extends ActionBarActivity {
+
+    LayoutStorage layoutStorage = new LayoutStorage(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        try {
+            layoutStorage.createDataBase();
+            layoutStorage.overrideDataBase();
+            layoutStorage.openDataBase();
+        } catch (IOException ioe) {
+            throw new Error("Unable to create database");
+        }
     }
 
 
@@ -46,8 +59,14 @@ public class MainActivity extends ActionBarActivity {
                 intent.putExtra("id", 0);
                 break;
             case R.id.butOneMove:
+                if (findViewById(R.id.texLevelSelect) == null) return;
+                TextView tw = (TextView) findViewById(R.id.texLevelSelect);
+                int id = Integer.decode(tw.getText().toString());
+                int setSize = layoutStorage.getSize("onemove_1");
+                if (id < 1) id = 1;
+                if (id > setSize) id = setSize;
                 intent.putExtra("set", "onemove_1");
-                intent.putExtra("id", 1);
+                intent.putExtra("id", id);
                 break;
             case R.id.butTwoMove:
                 intent.putExtra("fen", ChessLayout.startLayout);
