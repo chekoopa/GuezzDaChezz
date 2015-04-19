@@ -2,10 +2,9 @@ package com.sirckopo.guezzdachezz;
 
 
 import android.content.Intent;
-import android.database.SQLException;
 import android.graphics.Color;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Display;

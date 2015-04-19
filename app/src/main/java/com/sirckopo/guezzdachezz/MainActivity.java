@@ -1,8 +1,8 @@
 package com.sirckopo.guezzdachezz;
 
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -56,8 +56,6 @@ public class MainActivity extends ActionBarActivity {
                 intent.putExtra("fen", "8/5P2/8/k7/8/2K5/8/8 w - - 0 1");
                 break;
         }
-        // ChessMove[][] sol = {{new ChessMove("e2e4"), null}};
-        // intent.putExtra("solutions", );
         startActivity(intent);
     }
 }
