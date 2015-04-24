@@ -105,10 +105,7 @@ public class MainActivity extends ActionBarActivity {
         lButtons.addView(butTwoMove1, new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT, 1));
-
-
     }
-
 
     View.OnClickListener sendToGame = new View.OnClickListener() {
         @Override
@@ -124,16 +121,8 @@ public class MainActivity extends ActionBarActivity {
                 intent.putExtra("id", 0);
                 break;
             case R.id.butOneMove:
-                //if (findViewById(R.id.texLevelSelect) == null) return;
-                //TextView tw = (TextView) findViewById(R.id.texLevelSelect);
-                //int id = Integer.parseInt(tw.getText().toString());
-                //int setSize = layoutStorage.getSize("onemove_1");
-                //if (id < 1) id = 1;
-                //if (id > setSize) id = setSize;
-                intent.putExtra("set", "onemove_1");
-                //intent.putExtra("id", id);
-                intent.putExtra("id", 1);
-                break;
+                showLevelSelect("onemove_1");
+                return;
             case R.id.butTwoMove:
                 intent.putExtra("fen", ChessLayout.startLayout);
                 break;
@@ -144,9 +133,10 @@ public class MainActivity extends ActionBarActivity {
         startActivity(intent);
     }
 
-    public void showDialog() {
+    public void showLevelSelect(String set) {
         FragmentManager fragmentManager = getFragmentManager();
         LevelSelectFragment newFragment = new LevelSelectFragment();
+        newFragment.problemSet = set;
         newFragment.show(fragmentManager, "dialog");
     }
 }
