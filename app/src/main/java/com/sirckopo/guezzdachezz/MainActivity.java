@@ -1,12 +1,15 @@
 package com.sirckopo.guezzdachezz;
 
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import java.io.IOException;
 
@@ -15,10 +18,35 @@ public class MainActivity extends ActionBarActivity {
 
     LayoutStorage layoutStorage = new LayoutStorage(this);
 
+    LinearLayout lBase;
+    LinearLayout lButtons;
+
+    Button butFreeplay;
+    Button butCustomPlay;
+    Button butOneMove1;
+    Button butTwoMove1;
+
+    ImageView iwLogo;
+
+    private int screenWidth;
+    private int screenHeight;
+    private boolean isLandscape;
+
+    private void updateScreenMetrics() {
+        Display display = getWindowManager().getDefaultDisplay();
+        DisplayMetrics metrics = new DisplayMetrics();
+        display.getMetrics(metrics);
+        screenWidth = metrics.widthPixels;
+        screenHeight = metrics.heightPixels;
+        isLandscape = (screenWidth > screenHeight);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        //setContentView(R.layout.activity_main);
+
+        makeLayout();
 
         try {
             layoutStorage.createDataBase();
@@ -29,28 +57,65 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
+    private void makeLayout() {
+        updateScreenMetrics();
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+        lBase = new LinearLayout(this);
+        lBase.setOrientation(isLandscape ? LinearLayout.HORIZONTAL : LinearLayout.VERTICAL);
+        setContentView(lBase);
+
+        iwLogo = new ImageView(this);
+        iwLogo.setImageResource(R.drawable.figure_wn);
+        iwLogo.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        lBase.addView(iwLogo, new LinearLayout.LayoutParams(
+                isLandscape ? screenWidth / 2 : screenWidth,
+                isLandscape ? screenHeight    : screenHeight / 2));
+
+        lButtons = new LinearLayout(this);
+        lButtons.setOrientation(LinearLayout.VERTICAL);
+        lBase.addView(lButtons, new LinearLayout.LayoutParams(
+                isLandscape ? LinearLayout.LayoutParams.WRAP_CONTENT :
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                isLandscape ? LinearLayout.LayoutParams.MATCH_PARENT :
+                        LinearLayout.LayoutParams.WRAP_CONTENT, 1));
+
+        butFreeplay = new Button(this);
+        butFreeplay.setText(getString(R.string.action_freeplay));
+        butFreeplay.setId(R.id.butGame);
+        butFreeplay.setOnClickListener(sendToGame);
+        lButtons.addView(butFreeplay, new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT, 1));
+
+        //butCustomPlay = new Button(this);
+
+        butOneMove1 = new Button(this);
+        butOneMove1.setText(getString(R.string.action_onemove));
+        butOneMove1.setId(R.id.butOneMove);
+        butOneMove1.setOnClickListener(sendToGame);
+        lButtons.addView(butOneMove1, new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT, 1));
+
+        butTwoMove1 = new Button(this);
+        butTwoMove1.setText(getString(R.string.action_twomove) + " (TBD)");
+        butTwoMove1.setEnabled(false);
+        butTwoMove1.setId(R.id.butTwoMove);
+        butTwoMove1.setOnClickListener(sendToGame);
+        lButtons.addView(butTwoMove1, new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT, 1));
+
+
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+    View.OnClickListener sendToGame = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            sendToGame(v);
         }
-
-        return super.onOptionsItemSelected(item);
-    }
+    };
 
     public void sendToGame(View v) {
         Intent intent = new Intent(this, GameActivity.class);
@@ -59,22 +124,29 @@ public class MainActivity extends ActionBarActivity {
                 intent.putExtra("id", 0);
                 break;
             case R.id.butOneMove:
-                if (findViewById(R.id.texLevelSelect) == null) return;
-                TextView tw = (TextView) findViewById(R.id.texLevelSelect);
-                int id = Integer.parseInt(tw.getText().toString());
-                int setSize = layoutStorage.getSize("onemove_1");
-                if (id < 1) id = 1;
-                if (id > setSize) id = setSize;
+                //if (findViewById(R.id.texLevelSelect) == null) return;
+                //TextView tw = (TextView) findViewById(R.id.texLevelSelect);
+                //int id = Integer.parseInt(tw.getText().toString());
+                //int setSize = layoutStorage.getSize("onemove_1");
+                //if (id < 1) id = 1;
+                //if (id > setSize) id = setSize;
                 intent.putExtra("set", "onemove_1");
-                intent.putExtra("id", id);
+                //intent.putExtra("id", id);
+                intent.putExtra("id", 1);
                 break;
             case R.id.butTwoMove:
                 intent.putExtra("fen", ChessLayout.startLayout);
                 break;
-            case R.id.butTestLay:
-                intent.putExtra("fen", "8/5P2/8/k7/8/2K5/8/8 w - - 0 1");
-                break;
+            //case R.id.butTestLay:
+            //    intent.putExtra("fen", "8/5P2/8/k7/8/2K5/8/8 w - - 0 1");
+            //    break;
         }
         startActivity(intent);
+    }
+
+    public void showDialog() {
+        FragmentManager fragmentManager = getFragmentManager();
+        LevelSelectFragment newFragment = new LevelSelectFragment();
+        newFragment.show(fragmentManager, "dialog");
     }
 }

@@ -2,7 +2,9 @@
 <resources>
 
     <string name="app_name">GuezzDaChezz</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="hello_world">Welcome to GuezzDaChezz!</string>
+    <string name="action_onemove">One Move</string>
+    <string name="action_twomove">Two Move</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_game">GuezzDaChezz</string>
     <string name="action_hint">Hint</string>
