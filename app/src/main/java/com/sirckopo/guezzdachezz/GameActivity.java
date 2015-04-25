@@ -71,6 +71,13 @@ public class GameActivity extends ActionBarActivity {
         if (problemSet == null) {
             baseFEN = (intent.getStringExtra("fen") == null ? ChessLayout.startLayout :
                     intent.getStringExtra("fen"));
+        } else if (problemSet.equalsIgnoreCase("server")) {
+            baseFEN = intent.getStringExtra("fen");
+            String[] sol = intent.getStringExtra("solutions").split(" ");
+            solutions = new ChessMove[sol.length][2];
+            for (int i = 0; i < sol.length; i++) {
+                solutions[i][0] = new ChessMove(sol[i]);
+            }
         } else {
             getProblem();
         }
@@ -209,6 +216,12 @@ public class GameActivity extends ActionBarActivity {
     private void getProblem() {
         // just to transform a current problem into a plain layout
         solutions = null;
+
+        if (problemSet.equalsIgnoreCase("server")) {
+            // we don't need any more problems, eh
+            finish();
+            return;
+        }
 
         String[] problem = layoutStorage.getProblem(problemSet, currentId);
         if (problem == null) {

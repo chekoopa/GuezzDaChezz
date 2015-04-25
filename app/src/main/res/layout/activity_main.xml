@@ -24,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Testing Layout"
-        android:id="@+id/butTestLay"
+        android:id="@+id/butServerPlay"
         android:onClick="sendToGame"
         android:layout_below="@+id/butGame"
         android:layout_centerHorizontal="true" />
@@ -35,7 +35,7 @@
         android:text="One-mover"
         android:id="@+id/butOneMove"
         android:onClick="sendToGame"
-        android:layout_below="@+id/butTestLay"
+        android:layout_below="@+id/butServerPlay"
         android:layout_centerHorizontal="true" />
 
     <Button

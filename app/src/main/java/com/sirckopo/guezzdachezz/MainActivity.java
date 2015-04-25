@@ -22,7 +22,7 @@ public class MainActivity extends ActionBarActivity {
     LinearLayout lButtons;
 
     Button butFreeplay;
-    Button butCustomPlay;
+    Button butServerPlay;
     Button butOneMove1;
     Button butTwoMove1;
 
@@ -44,7 +44,6 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_main);
 
         makeLayout();
 
@@ -87,8 +86,6 @@ public class MainActivity extends ActionBarActivity {
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.MATCH_PARENT, 1));
 
-        //butCustomPlay = new Button(this);
-
         butOneMove1 = new Button(this);
         butOneMove1.setText(getString(R.string.action_onemove));
         butOneMove1.setId(R.id.butOneMove);
@@ -105,6 +102,15 @@ public class MainActivity extends ActionBarActivity {
         lButtons.addView(butTwoMove1, new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT, 1));
+
+        butServerPlay = new Button(this);
+        butServerPlay.setText(getString(R.string.action_server) + " (experimental)");
+        butServerPlay.setId(R.id.butServerPlay);
+        butServerPlay.setOnClickListener(sendToGame);
+        lButtons.addView(butServerPlay, new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT, 1));
+
     }
 
     View.OnClickListener sendToGame = new View.OnClickListener() {
@@ -115,20 +121,22 @@ public class MainActivity extends ActionBarActivity {
     };
 
     public void sendToGame(View v) {
-        Intent intent = new Intent(this, GameActivity.class);
+        Intent intent = null;
         switch (v.getId()) {
             case R.id.butGame:
+                intent = new Intent(this, GameActivity.class);
                 intent.putExtra("id", 0);
                 break;
             case R.id.butOneMove:
                 showLevelSelect("onemove_1");
                 return;
             case R.id.butTwoMove:
+                intent = new Intent(this, GameActivity.class);
                 intent.putExtra("fen", ChessLayout.startLayout);
                 break;
-            //case R.id.butTestLay:
-            //    intent.putExtra("fen", "8/5P2/8/k7/8/2K5/8/8 w - - 0 1");
-            //    break;
+            case R.id.butServerPlay:
+                intent = new Intent(this, ServerConnectionActivity.class);
+                break;
         }
         startActivity(intent);
     }

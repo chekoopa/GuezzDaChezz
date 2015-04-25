@@ -17,5 +17,9 @@
     <string name="go">Go!</string>
     <string name="cancel">Cancel</string>
     <string name="title_activity_board_select">Board Select</string>
+    <string name="title_activity_server_connection">Server Connection</string>
+    <string name="caution_experimental">Experimental feature! Use with precaution.</string>
+    <string name="hint_ip">IP address</string>
+    <string name="action_server">Connect to server</string>
 
 </resources>
