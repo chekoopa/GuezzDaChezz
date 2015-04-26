@@ -25,9 +25,21 @@
     <string name="action_request_problem">Request a problem</string>
     <string name="action_ping">Ping</string>
     <string name="error_connectivity">Uh-uh-uh, check your connectivity.</string>
-    <string name="tip_connection_wait">Trying to connect, please wait...</string>
+    <string name="tip_connection_wait">Trying to connect, please wait…</string>
     <string name="error_connection">Something is wrong with the connection.</string>
     <string name="tip_ping_success">Pong! You can proceed with receiving problems.</string>
-    <string name="tip_problem_success">Got a problem, displaying...</string>
+    <string name="tip_problem_success">Got a problem, displaying…</string>
+    <string name="title_activity_about">About</string>
+    <string name="copyright">© 2015 Sir Ckopo</string>
+    <string name="action_reset_progress">Reset Progress</string>
+    <string name="action_reset_progress_confirm">Press again to confirm</string>
+    <string name="action_reset_progress_done">KABOOM!</string>
+    <string name="about_text">Personal student project of Mikhail \'Sir Ckopo\' Chekan, made for Samsung IT-School @ Irkutsk, Russia.\n\n
+Planned as a part of another mine chess project, stay tuned.</string>
+    <string name="action_about">About/Settings</string>
+    <string name="tip_game_over">Uh-uh-uh, the game is already over.</string>
+    <string name="tip_checkmate">Checkmate!!!</string>
+    <string name="tip_check">Check!</string>
+    <string name="tip_king_attacked">The king is still under attack!</string>
 
 </resources>

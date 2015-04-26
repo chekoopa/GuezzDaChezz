@@ -1,6 +1,8 @@
 package com.sirckopo.guezzdachezz;
 
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -64,9 +66,16 @@ public class GameActivity extends ActionBarActivity {
         }
 
         // Chess things
+
         Intent intent = getIntent();
-        problemSet = intent.getStringExtra("set");
-        currentId = intent.getIntExtra("id", 0);
+        // a little workaround for keeping a problem on rotation
+        if (savedInstanceState != null) {
+            problemSet = savedInstanceState.getString("set");
+            currentId = savedInstanceState.getInt("id");
+        } else {
+            problemSet = intent.getStringExtra("set");
+            currentId = intent.getIntExtra("id", 0);
+        }
 
         if (problemSet == null) {
             baseFEN = (intent.getStringExtra("fen") == null ? ChessLayout.startLayout :
@@ -100,6 +109,8 @@ public class GameActivity extends ActionBarActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString("board", lMain.getFEN());
+        outState.putString("set", problemSet);
+        outState.putInt("id", currentId);
     }
 
     @Override
@@ -174,6 +185,7 @@ public class GameActivity extends ActionBarActivity {
                 butSquare.setMinimumWidth(1);
                 butSquare.setMinimumHeight(1);
                 butSquare.setPadding(0, 0, 0, 0);
+                butSquare.setTextColor(Color.BLACK);
                 butSquares.add(butSquare);
                 trRank.addView(butSquare);
             }
@@ -257,7 +269,10 @@ public class GameActivity extends ActionBarActivity {
         if (solutions == null || solutions.length == 0)
             return;
         int i = (int) Math.floor(Math.random() * solutions.length);
-        int fig = lMain.getBoardFigure(solutions[i][0].getCode(0), solutions[i][0].getCode(1));
+        int cell = solutions[i][0].getCode(0) * 10 + solutions[i][0].getCode(1);
+        highlightCell(cell);
+        //int fig = lMain.getBoardFigure(solutions[i][0].getCode(0), solutions[i][0].getCode(1));
+        /*0
         String hint = "Well, you shall try a ";
         switch (fig) {
             case ChessLayout.fPawn: hint += "pawn"; break;
@@ -269,6 +284,7 @@ public class GameActivity extends ActionBarActivity {
         }
         hint += ". Is it enough for you?";
         Toast.makeText(getApplicationContext(), hint, Toast.LENGTH_LONG).show();
+        */
     }
 
     private void updateSquares() {
@@ -326,8 +342,8 @@ public class GameActivity extends ActionBarActivity {
 
     private void squarePress(View v) {
         if (lMain.isCheckmate(lMain.getMove())) {
-            //TODO: game over nudge
-            Toast.makeText(getApplicationContext(), "Uh-uh-uh, the game is already over.",
+            mistakeNudge();
+            Toast.makeText(getApplicationContext(), getString(R.string.tip_game_over),
                     Toast.LENGTH_SHORT).show();
             return;
         }
@@ -414,21 +430,20 @@ public class GameActivity extends ActionBarActivity {
     }
 
     private void warnKingIsStillAttacked(ChessMove cm) {
-        //TODO: 'king is still attacked' notification (a nudge?)
-        Toast.makeText(getApplicationContext(), "The king is still under attack!",
+        Toast.makeText(getApplicationContext(), getString(R.string.tip_king_attacked),
                 Toast.LENGTH_SHORT).show();
+        highlightOwnKing();
     }
 
     private void warnMoveResult(ChessMove cm) {
-        //tvTester.setText("Move made! " + cm.getString());
         if (solutions == null || solutions.length == 0) { // just check for a check/mate
             if (lMain.isCheck(lMain.getMove())) {
-                //TODO: fancier nudge for a check/mate?
-                if (lMain.isCheckmate(lMain.getMove()))
-                    Toast.makeText(getApplicationContext(), "Checkmate!!!",
-                            Toast.LENGTH_LONG).show();
-                else
-                    Toast.makeText(getApplicationContext(), "Check!",
+                if (lMain.isCheckmate(lMain.getMove())) {
+                    Toast.makeText(getApplicationContext(), getString(R.string.tip_checkmate),
+                            Toast.LENGTH_SHORT).show();
+                    explodeOwnKing();
+                } else
+                    Toast.makeText(getApplicationContext(), getString(R.string.tip_check),
                             Toast.LENGTH_SHORT).show();
             }
             return;
@@ -436,17 +451,15 @@ public class GameActivity extends ActionBarActivity {
 
         for (ChessMove[] solution : solutions) {
             if (solution[0].isEqual(cm)) {
-                //TODO: fancier "solved!" greeting?
-                Toast.makeText(getApplicationContext(), "Right move! Good job!",
-                        Toast.LENGTH_LONG).show();
-                delayLevelUp();
+                //Toast.makeText(getApplicationContext(), "Right move! Good job!",
+                //        Toast.LENGTH_SHORT).show();
+                makeLevelUp();
                 return;
             }
         }
-        Toast.makeText(getApplicationContext(), "Wrong! Think again.",
-                Toast.LENGTH_SHORT).show();
-        // TODO: get enemy side to make a defensive move if on wrong try (or a little nudge)
-        delayReset();
+        //Toast.makeText(getApplicationContext(), "Wrong! Think again.",
+        //        Toast.LENGTH_SHORT).show();
+        makeMistake();
     }
 
     private void showPromotionScreen() {
@@ -479,6 +492,66 @@ public class GameActivity extends ActionBarActivity {
         return false;
     }
 
+    private void highlightCell(int tag) {
+        for (Button btn : butSquares) {
+            int code = (Integer) btn.getTag();
+            if (code == tag) {
+                highlightView(btn);
+                break;
+            }
+        }
+    }
+
+    private void highlightOwnKing() {
+        for (Button btn : butSquares) {
+            int code = (Integer) btn.getTag();
+            int ownColor = ((code / 10 + code % 10) % 2 == 0) ? Color.argb(128, 0, 0, 0) :
+                    Color.argb(128, 255, 255, 255);
+            if (lMain.getBoard(code / 10, code % 10) == ChessLayout.fKing +
+                    (lMain.getMove() ? ChessLayout.fBlack : 0)) {
+                highlightView(btn);
+                break;
+            }
+        }
+    }
+
+    private void highlightView(View v) {
+        AnimatorSet animSet = new AnimatorSet();
+        animSet.playTogether(
+                ObjectAnimator.ofFloat(v, "alpha", 1f, 0.1f, 1f, 0.1f, 1f));
+        animSet.setDuration(1000);
+        animSet.start();
+    }
+
+    private void explodeOwnKing() {
+        for (Button btn : butSquares) {
+            int code = (Integer) btn.getTag();
+            int ownColor = ((code / 10 + code % 10) % 2 == 0) ? Color.argb(128, 0, 0, 0) :
+                    Color.argb(128, 255, 255, 255);
+            if (lMain.getBoard(code / 10, code % 10) == ChessLayout.fKing +
+                    (lMain.getMove() ? ChessLayout.fBlack : 0)) {
+                AnimatorSet animSet = new AnimatorSet();
+                animSet.playTogether(
+                    ObjectAnimator.ofInt(btn, "backgroundColor", ownColor, Color.RED, ownColor),
+                    ObjectAnimator.ofInt(btn, "textColor", Color.BLACK, Color.WHITE, Color.BLACK));
+                animSet.setDuration(500);
+                animSet.start();
+                break;
+            }
+        }
+    }
+
+    private void makeLevelUp() {
+        for (Button btn : butSquares) {
+            AnimatorSet animSet = new AnimatorSet();
+            animSet.playTogether(
+                    ObjectAnimator.ofFloat(btn, "alpha", 1f, 0.1f, 1f));
+            animSet.setDuration(500);
+            animSet.start();
+        }
+        delayLevelUp();
+    }
+
     private void delayLevelUp() {
         llBase.postDelayed(new Runnable() {
             @Override
@@ -488,7 +561,21 @@ public class GameActivity extends ActionBarActivity {
                 currentId += 1;
                 getProblem();
             }
-        }, 500);
+        }, 700);
+    }
+
+
+    private void mistakeNudge() {
+        AnimatorSet animSet = new AnimatorSet();
+        animSet.playTogether(
+                ObjectAnimator.ofFloat(tlChessboard, "alpha", 1, 0.5f, 1));
+        animSet.setDuration(1000);
+        animSet.start();
+    }
+
+    private void makeMistake() {
+        mistakeNudge();
+        delayReset();
     }
 
     private void delayReset() {
@@ -497,6 +584,6 @@ public class GameActivity extends ActionBarActivity {
             public void run() {
                 resetLayout();
             }
-        }, 500);
+        }, 600);
     }
 }

@@ -25,6 +25,7 @@ public class MainActivity extends ActionBarActivity {
     Button butServerPlay;
     Button butOneMove1;
     Button butTwoMove1;
+    Button butAbout;
 
     ImageView iwLogo;
 
@@ -85,6 +86,7 @@ public class MainActivity extends ActionBarActivity {
                         LinearLayout.LayoutParams.WRAP_CONTENT, 1));
 
         butFreeplay = new Button(this);
+        butFreeplay.setBackgroundResource(R.drawable.greenhitechbutton);
         butFreeplay.setText(getString(R.string.action_freeplay));
         butFreeplay.setId(R.id.butGame);
         butFreeplay.setOnClickListener(sendToGame);
@@ -93,6 +95,7 @@ public class MainActivity extends ActionBarActivity {
                         LinearLayout.LayoutParams.MATCH_PARENT, 1));
 
         butOneMove1 = new Button(this);
+        butOneMove1.setBackgroundResource(R.drawable.greenhitechbutton);
         butOneMove1.setText(getString(R.string.action_onemove));
         butOneMove1.setId(R.id.butOneMove);
         butOneMove1.setOnClickListener(sendToGame);
@@ -101,8 +104,8 @@ public class MainActivity extends ActionBarActivity {
                 LinearLayout.LayoutParams.MATCH_PARENT, 1));
 
         butTwoMove1 = new Button(this);
-        butTwoMove1.setText(getString(R.string.action_twomove) + " (TBD)");
-        butTwoMove1.setEnabled(false);
+        butTwoMove1.setBackgroundResource(R.drawable.greenhitechbutton);
+        butTwoMove1.setText(getString(R.string.action_twomove));
         butTwoMove1.setId(R.id.butTwoMove);
         butTwoMove1.setOnClickListener(sendToGame);
         lButtons.addView(butTwoMove1, new LinearLayout.LayoutParams(
@@ -110,10 +113,20 @@ public class MainActivity extends ActionBarActivity {
                 LinearLayout.LayoutParams.MATCH_PARENT, 1));
 
         butServerPlay = new Button(this);
-        butServerPlay.setText(getString(R.string.action_server) + " (experimental)");
+        butServerPlay.setBackgroundResource(R.drawable.greenhitechbutton);
+        butServerPlay.setText(getString(R.string.action_server));
         butServerPlay.setId(R.id.butServerPlay);
         butServerPlay.setOnClickListener(sendToGame);
         lButtons.addView(butServerPlay, new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT, 1));
+
+        butAbout = new Button(this);
+        butAbout.setBackgroundResource(R.drawable.greenhitechbutton);
+        butAbout.setText(getString(R.string.action_about));
+        butAbout.setId(R.id.butAbout);
+        butAbout.setOnClickListener(sendToGame);
+        lButtons.addView(butAbout, new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT, 1));
 
@@ -137,11 +150,13 @@ public class MainActivity extends ActionBarActivity {
                 showLevelSelect("onemove_1");
                 return;
             case R.id.butTwoMove:
-                intent = new Intent(this, GameActivity.class);
-                intent.putExtra("fen", ChessLayout.startLayout);
+                showLevelSelect("twomove_1");
                 break;
             case R.id.butServerPlay:
                 intent = new Intent(this, ServerConnectionActivity.class);
+                break;
+            case R.id.butAbout:
+                intent = new Intent(this, AboutActivity.class);
                 break;
         }
         startActivity(intent);

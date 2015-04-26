@@ -23,9 +23,21 @@
     <string name="divider_of">из</string>
     <string name="action_ping">Проверить контакт</string>
     <string name="action_request_problem">Запросить задачу</string>
-    <string name="error_connectivity">А подключения-то нету...</string>
+    <string name="error_connectivity">А подключения-то нету…</string>
     <string name="error_connection">Что-то не так с этим контактом.</string>
-    <string name="tip_connection_wait">Пробуем подключиться, ожидайте...</string>
+    <string name="tip_connection_wait">Пробуем подключиться, ожидайте…</string>
     <string name="tip_ping_success">Есть контакт! Можно получать задачи.</string>
     <string name="tip_problem_success">Получили задачку, внимание на экран</string>
+    <string name="copyright">© 2015 Sir Ckopo</string>
+    <string name="title_activity_about">О приложении</string>
+    <string name="action_reset_progress">Сбросить прогресс</string>
+    <string name="action_reset_progress_confirm">Подтвердите нажатием</string>
+    <string name="action_reset_progress_done">БАБАХ!</string>
+    <string name="about_text">Персональный учебный проект Михаила \'Sir Ckopo\' Чекана, выполненный под эгидой IT-школы Samsung, город Иркутск, Россия.\n\n
+В планах задействовать приложение как часть другого шахматного проекта, оставайтесь на связи.</string>
+    <string name="action_about">Информация/Настройки</string>
+    <string name="tip_game_over">Нельзя, игра уже закончена.</string>
+    <string name="tip_check">Шах!</string>
+    <string name="tip_checkmate">Шах и мат!!!</string>
+    <string name="tip_king_attacked">Король всё еще под ударом!</string>
 </resources>
