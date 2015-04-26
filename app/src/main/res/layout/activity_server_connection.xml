@@ -17,7 +17,9 @@
         android:layout_below="@+id/lblTip"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:hint="@string/hint_ip" />
+        android:hint="@string/hint_ip"
+        android:maxLines="1"
+        android:singleLine="true" />
 
     <Button
         android:layout_width="match_parent"

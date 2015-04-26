@@ -56,6 +56,12 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        layoutStorage.close();
+    }
+
     private void makeLayout() {
         updateScreenMetrics();
 

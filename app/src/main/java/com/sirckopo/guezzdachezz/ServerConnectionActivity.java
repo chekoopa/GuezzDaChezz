@@ -8,21 +8,18 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.InetAddress;
-import java.net.Socket;
-
 public class ServerConnectionActivity extends ActionBarActivity {
+
+    Button butPing;
+    Button butProblem;
+    TextView lblStatus;
+    TextView txtIP;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,21 +30,18 @@ public class ServerConnectionActivity extends ActionBarActivity {
         // OMG, A HERESY!
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
+
+        butPing = (Button) findViewById(R.id.btnPing);
+        butProblem = (Button) findViewById(R.id.btnGo);
+        lblStatus = (TextView) findViewById(R.id.lblTip);
+        txtIP = (TextView) findViewById(R.id.txtIP);
     }
 
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
-
-    public void getAProblem(View v) {
-        TextView tw = (TextView) findViewById(R.id.txtIP);
+    public void processProblem() {
         String answer;
         if (isNetworkAvailable()) {
-            answer = interchangeJSON("random", tw.getText().toString());
-            if (answer == "") {
+            answer = JSONOperator.get();
+            if (answer.length() == 0) {
                 answer = "Something is wrong with the connection.";
             } else {
                 try {
@@ -59,7 +53,6 @@ public class ServerConnectionActivity extends ActionBarActivity {
                     intent.putExtra("answers", json.getString("answers"));
                     answer = "Got a problem, main screen turn on";
                     startActivity(intent);
-
                 } catch (JSONException e) {
                     answer = "Something is wrong with the connection.";
                     e.printStackTrace();
@@ -68,15 +61,15 @@ public class ServerConnectionActivity extends ActionBarActivity {
         } else {
             answer = "Uh-uh-uh, you'd better check your network";
         }
-        TextView lbl = (TextView) findViewById(R.id.lblTip);
-        lbl.setText(answer);
+        lblStatus.setText(answer);
+        butPing.setEnabled(true);
+        butProblem.setEnabled(true);
     }
 
-    public void makeAPing(View v) {
-        TextView tw = (TextView) findViewById(R.id.txtIP);
+    public void processPing() {
         String answer;
         if (isNetworkAvailable()) {
-            answer = interchangeJSON("ping", tw.getText().toString());
+            answer = JSONOperator.get();
             try {
                 JSONObject json = new JSONObject(answer);
                 if (json.getString("answer").equalsIgnoreCase("pong")) {
@@ -91,41 +84,47 @@ public class ServerConnectionActivity extends ActionBarActivity {
         } else {
             answer = "Uh-uh-uh, you'd better check your network";
         }
-        TextView lbl = (TextView) findViewById(R.id.lblTip);
-        lbl.setText(answer);
+        lblStatus.setText(answer);
+        butPing.setEnabled(true);
+        butProblem.setEnabled(true);
     }
 
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
 
-    private String interchangeJSON(String type, String ipaddr) {
-        String string = "{\"type\":\"" + type + "\"}";
-        DataInputStream is;
-        DataOutputStream os;
-        String result = "";
-
-        try {
-            Socket socket = new Socket(InetAddress.getByName(ipaddr), 13373);
-            is = new DataInputStream(socket.getInputStream());
-            os = new DataOutputStream(socket.getOutputStream());
-            PrintWriter pw = new PrintWriter(os);
-            pw.println(string);
-            pw.flush();
-
-            BufferedReader in = new BufferedReader(new InputStreamReader(is));
-            result = in.readLine();
-            JSONObject json = new JSONObject(result);
-            if(!json.has("answer")) {
-                result = "";
+    public void getAProblem(View v) {
+        if (!isNetworkAvailable())
+            lblStatus.setText("Uh-uh-uh, check your connectivity.");
+        butPing.setEnabled(false);
+        butProblem.setEnabled(false);
+        sendJSON("{\"type\": \"random\"}", new Runnable() {
+            @Override
+            public void run() {
+                processProblem();
             }
-            is.close();
-            os.close();
-
-        } catch (IOException e) {
-            result = "";
-            e.printStackTrace();
-        } catch (JSONException e) {
-            result = "";
-            e.printStackTrace();
-        }
-        return result;
+        });
     }
+
+    public void makeAPing(View v) {
+        if (!isNetworkAvailable())
+            lblStatus.setText("Uh-uh-uh, check your connectivity.");
+        butPing.setEnabled(false);
+        butProblem.setEnabled(false);
+        sendJSON("{\"type\": \"ping\"}", new Runnable() {
+            @Override
+            public void run() {
+                processPing();
+            }
+        });
+    }
+
+    private void sendJSON(String line, Runnable finish) {
+        if (!JSONOperator.isTaskFree()) return;
+        JSONOperator.send(line, txtIP.getText().toString(), 13373, finish);
+    }
+
 }
