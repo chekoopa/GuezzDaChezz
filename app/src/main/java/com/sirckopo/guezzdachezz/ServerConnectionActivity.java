@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.Button;
@@ -25,11 +24,6 @@ public class ServerConnectionActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_server_connection);
-
-        //TODO: hide a JSON exchange into an AsyncTask
-        // OMG, A HERESY!
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
 
         butPing = (Button) findViewById(R.id.btnPing);
         butProblem = (Button) findViewById(R.id.btnGo);
@@ -101,6 +95,7 @@ public class ServerConnectionActivity extends ActionBarActivity {
             lblStatus.setText("Uh-uh-uh, check your connectivity.");
         butPing.setEnabled(false);
         butProblem.setEnabled(false);
+        lblStatus.setText("Please wait, trying to connect...");
         sendJSON("{\"type\": \"random\"}", new Runnable() {
             @Override
             public void run() {
@@ -114,6 +109,7 @@ public class ServerConnectionActivity extends ActionBarActivity {
             lblStatus.setText("Uh-uh-uh, check your connectivity.");
         butPing.setEnabled(false);
         butProblem.setEnabled(false);
+        lblStatus.setText("Please wait, trying to connect...");
         sendJSON("{\"type\": \"ping\"}", new Runnable() {
             @Override
             public void run() {
