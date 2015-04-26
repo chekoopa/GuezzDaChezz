@@ -151,7 +151,7 @@ public class MainActivity extends ActionBarActivity {
                 return;
             case R.id.butTwoMove:
                 showLevelSelect("twomove_1");
-                break;
+                return;
             case R.id.butServerPlay:
                 intent = new Intent(this, ServerConnectionActivity.class);
                 break;

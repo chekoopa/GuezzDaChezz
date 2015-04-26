@@ -29,7 +29,8 @@
         android:onClick="getAProblem"
         android:layout_below="@+id/btnPing"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:background="@drawable/greenhitechbutton" />
 
     <Button
         android:layout_width="match_parent"
@@ -40,6 +41,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:nestedScrollingEnabled="false"
-        android:onClick="makeAPing" />
+        android:onClick="makeAPing"
+        android:background="@drawable/greenhitechbutton" />
 
 </RelativeLayout>

@@ -41,5 +41,7 @@ Planned as a part of another mine chess project, stay tuned.</string>
     <string name="tip_checkmate">Checkmate!!!</string>
     <string name="tip_check">Check!</string>
     <string name="tip_king_attacked">The king is still under attack!</string>
+    <string name="dialog_greeting">Problem pack completed! Good job!</string>
+    <string name="ok">OK</string>
 
 </resources>

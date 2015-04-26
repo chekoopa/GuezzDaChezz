@@ -3,6 +3,8 @@ package com.sirckopo.guezzdachezz;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -244,9 +246,7 @@ public class GameActivity extends ActionBarActivity {
 
         String[] problem = layoutStorage.getProblem(problemSet, currentId);
         if (problem == null) {
-            //TODO: fancy final grats screen
-            Toast.makeText(getApplicationContext(), "That's all, folks!", Toast.LENGTH_LONG).show();
-            finish();
+            greetAndFinish();
             return;
         }
         baseFEN = problem[0];
@@ -271,20 +271,6 @@ public class GameActivity extends ActionBarActivity {
         int i = (int) Math.floor(Math.random() * solutions.length);
         int cell = solutions[i][0].getCode(0) * 10 + solutions[i][0].getCode(1);
         highlightCell(cell);
-        //int fig = lMain.getBoardFigure(solutions[i][0].getCode(0), solutions[i][0].getCode(1));
-        /*0
-        String hint = "Well, you shall try a ";
-        switch (fig) {
-            case ChessLayout.fPawn: hint += "pawn"; break;
-            case ChessLayout.fKnight: hint += "knight"; break;
-            case ChessLayout.fBishop: hint += "bishop"; break;
-            case ChessLayout.fRook: hint += "rook"; break;
-            case ChessLayout.fQueen: hint += "queen"; break;
-            case ChessLayout.fKing: hint += "king"; break;
-        }
-        hint += ". Is it enough for you?";
-        Toast.makeText(getApplicationContext(), hint, Toast.LENGTH_LONG).show();
-        */
     }
 
     private void updateSquares() {
@@ -296,9 +282,6 @@ public class GameActivity extends ActionBarActivity {
                 b.setText("");
                 continue;
             }
-            //plain style
-            //b.setText((fig / ChessLayout.fBlack == 1 ? "b" : "w") +
-            //        ChessLayout.tFigures.charAt(fig % ChessLayout.fBlack));
             b.setText(ChessLayout.getUnicodeCharString(fig));
         }
         if (miMoveIndicator != null)
@@ -363,11 +346,6 @@ public class GameActivity extends ActionBarActivity {
                 sqx = sq;
                 highlightMoveBuffer();
                 state = STATE_SQUARE;
-                ///**/String texst = "Waiting for a move, one of " + moveBuffer.size();
-                //for (ChessMove cm: moveBuffer) {
-                //    texst += " " + cm.getString();
-                //}
-                //tvTester.setText(texst);
                 break;
             case STATE_SQUARE:
                 //TODO: unite promotion and plain move codes
@@ -451,14 +429,10 @@ public class GameActivity extends ActionBarActivity {
 
         for (ChessMove[] solution : solutions) {
             if (solution[0].isEqual(cm)) {
-                //Toast.makeText(getApplicationContext(), "Right move! Good job!",
-                //        Toast.LENGTH_SHORT).show();
                 makeLevelUp();
                 return;
             }
         }
-        //Toast.makeText(getApplicationContext(), "Wrong! Think again.",
-        //        Toast.LENGTH_SHORT).show();
         makeMistake();
     }
 
@@ -586,4 +560,22 @@ public class GameActivity extends ActionBarActivity {
             }
         }, 600);
     }
+
+    private void greetAndFinish() {
+        AlertDialog.Builder dlgAlert2 = new AlertDialog.Builder(this);
+        dlgAlert2.setMessage(getString(R.string.dialog_greeting));
+        dlgAlert2.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                CloseActivity();
+            }
+        });
+        dlgAlert2.show();
+    }
+
+    private void CloseActivity() {
+        this.finish();
+    }
+
 }

@@ -40,4 +40,6 @@
     <string name="tip_check">Шах!</string>
     <string name="tip_checkmate">Шах и мат!!!</string>
     <string name="tip_king_attacked">Король всё еще под ударом!</string>
+    <string name="dialog_greeting">Набор задач прорешан! Так держать!</string>
+    <string name="ok">ОК</string>
 </resources>
