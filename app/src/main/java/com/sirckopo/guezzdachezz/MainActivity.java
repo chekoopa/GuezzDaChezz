@@ -71,7 +71,7 @@ public class MainActivity extends ActionBarActivity {
         setContentView(lBase);
 
         iwLogo = new ImageView(this);
-        iwLogo.setImageResource(R.drawable.figure_wn);
+        iwLogo.setImageResource(R.drawable.logo);
         iwLogo.setScaleType(ImageView.ScaleType.FIT_CENTER);
         lBase.addView(iwLogo, new LinearLayout.LayoutParams(
                 isLandscape ? screenWidth / 2 : screenWidth,

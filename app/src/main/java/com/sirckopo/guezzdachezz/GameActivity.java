@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.DisplayMetrics;
@@ -500,13 +501,12 @@ public class GameActivity extends ActionBarActivity {
     private void explodeOwnKing() {
         for (Button btn : butSquares) {
             int code = (Integer) btn.getTag();
-            int ownColor = ((code / 10 + code % 10) % 2 == 0) ? Color.argb(128, 0, 0, 0) :
-                    Color.argb(128, 255, 255, 255);
+            int ownColor = ((ColorDrawable)btn.getBackground()).getColor();
             if (lMain.getBoard(code / 10, code % 10) == ChessLayout.fKing +
                     (lMain.getMove() ? ChessLayout.fBlack : 0)) {
                 AnimatorSet animSet = new AnimatorSet();
                 animSet.playTogether(
-                    ObjectAnimator.ofInt(btn, "backgroundColor", ownColor, Color.RED, ownColor),
+                    ObjectAnimator.ofInt(btn, "backgroundColor", ownColor, Color.RED, Color.YELLOW),
                     ObjectAnimator.ofInt(btn, "textColor", Color.BLACK, Color.WHITE, Color.BLACK));
                 animSet.setDuration(500);
                 animSet.start();
