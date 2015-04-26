@@ -201,6 +201,7 @@ public class GameActivity extends ActionBarActivity {
     }
 
     LayoutStorage layoutStorage = new LayoutStorage(this);
+    ProgressStorage progressStorage = new ProgressStorage(this);
 
     ChessLayout lMain = new ChessLayout();
 
@@ -482,6 +483,7 @@ public class GameActivity extends ActionBarActivity {
         llBase.postDelayed(new Runnable() {
             @Override
             public void run() {
+                progressStorage.writeLastCompleted(problemSet, currentId);
                 currentId += 1;
                 getProblem();
             }

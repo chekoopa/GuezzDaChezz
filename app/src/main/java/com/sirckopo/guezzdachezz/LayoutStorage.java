@@ -137,8 +137,8 @@ public class LayoutStorage extends SQLiteOpenHelper {
     }
 
     public int getSize(String set) {
-        String query =  "SELECT count() FROM " + set;
-        Cursor cursor =  this.myDataBase.rawQuery(query, null);
+        String query = "SELECT count() FROM " + set;
+        Cursor cursor = this.myDataBase.rawQuery(query, null);
 
         if (cursor.getCount() == 0) {
             cursor.close();

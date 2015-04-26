@@ -16,12 +16,14 @@ import java.io.IOException;
 public class LevelSelectFragment extends DialogFragment {
 
     LayoutStorage layoutStorage;
+    ProgressStorage progressStorage;
 
     SeekBar levelSelector;
     TextView statusText;
 
     public String problemSet = "";
     int problemId = 0;
+    int lastCompleted = 0;
     int maxProblems = 0;
 
     @Override
@@ -50,6 +52,7 @@ public class LevelSelectFragment extends DialogFragment {
                     }
                 });
 
+        progressStorage = new ProgressStorage(layout.getContext());
         layoutStorage = new LayoutStorage(layout.getContext());
         try {
             layoutStorage.createDataBase();
@@ -65,10 +68,26 @@ public class LevelSelectFragment extends DialogFragment {
         if (maxProblems == 0)
             LevelSelectFragment.this.getDialog().dismiss();
 
+        lastCompleted = progressStorage.getLastCompleted(problemSet);
+        if (lastCompleted == 0) {
+            layout.post(new Runnable() {
+                @Override
+                public void run() {
+                    Intent intent = new Intent(LevelSelectFragment.this.getDialog().getContext(),
+                            GameActivity.class);
+                    intent.putExtra("set", problemSet);
+                    intent.putExtra("id", 1);
+                    startActivity(intent);
+                    LevelSelectFragment.this.getDialog().dismiss();
+                }
+            });
+        }
+
         statusText = (TextView) layout.findViewById(R.id.statusText);
         levelSelector = (SeekBar) layout.findViewById(R.id.levelSelector);
         levelSelector.setOnSeekBarChangeListener(seekBarListener);
-        levelSelector.setMax(maxProblems - 1);
+        levelSelector.setMax(Math.min(lastCompleted + 1, maxProblems) - 1);
+        levelSelector.setProgress(levelSelector.getMax());
 
         return builder.create();
     }
@@ -77,6 +96,12 @@ public class LevelSelectFragment extends DialogFragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString("set", problemSet);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
     }
 
     SeekBar.OnSeekBarChangeListener seekBarListener = new SeekBar.OnSeekBarChangeListener() {
@@ -89,7 +114,9 @@ public class LevelSelectFragment extends DialogFragment {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             problemId = levelSelector.getProgress() + 1;
-            statusText.setText(String.valueOf(problemId) + " / " + String.valueOf(maxProblems));
+            statusText.setText(String.valueOf(problemId) + " / " +
+                    String.valueOf(Math.min(lastCompleted + 1, maxProblems)) + " of " +
+                    String.valueOf(maxProblems));
         }
     };
 
