@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">GuezzDaChezz</string>
+    <string name="action_freeplay">Просто поиграть</string>
+    <string name="action_hint">Подсказка</string>
+    <string name="action_onemove">Один ход</string>
+    <string name="action_reset">Сброс</string>
+    <string name="action_server">Подключиться к серверу</string>
+    <string name="action_settings">Настройки</string>
+    <string name="action_twomove">Два хода</string>
+    <string name="cancel">Отмена</string>
+    <string name="caution_experimental">Экспериментальная функция! Использовать осторожно.</string>
+    <string name="chess_black">Черные</string>
+    <string name="chess_white">Белые</string>
+    <string name="dialog_select_board">Выберите доску</string>
+    <string name="go">Вперед!</string>
+    <string name="hello_world">Добро пожаловать в GuezzDaChezz!</string>
+    <string name="hint_ip">IP-адрес</string>
+    <string name="status_freeplay">Своб. игра</string>
+    <string name="title_activity_board_select">Выбор доски</string>
+    <string name="title_activity_game">GuezzDaChezz</string>
+    <string name="title_activity_server_connection">Подключение к серверу</string>
+    <string name="divider_of">из</string>
+    <string name="action_ping">Проверить контакт</string>
+    <string name="action_request_problem">Запросить задачу</string>
+    <string name="error_connectivity">А подключения-то нету...</string>
+    <string name="error_connection">Что-то не так с этим контактом.</string>
+    <string name="tip_connection_wait">Пробуем подключиться, ожидайте...</string>
+    <string name="tip_ping_success">Есть контакт! Можно получать задачи.</string>
+    <string name="tip_problem_success">Получили задачку, внимание на экран</string>
+</resources>

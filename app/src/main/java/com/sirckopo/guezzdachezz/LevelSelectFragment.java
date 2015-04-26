@@ -115,8 +115,8 @@ public class LevelSelectFragment extends DialogFragment {
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             problemId = levelSelector.getProgress() + 1;
             statusText.setText(String.valueOf(problemId) + " / " +
-                    String.valueOf(Math.min(lastCompleted + 1, maxProblems)) + " of " +
-                    String.valueOf(maxProblems));
+                    String.valueOf(Math.min(lastCompleted + 1, maxProblems)) + " " +
+                    getString(R.string.divider_of) + " " + String.valueOf(maxProblems));
         }
     };
 

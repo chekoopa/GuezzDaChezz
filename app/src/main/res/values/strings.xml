@@ -21,5 +21,13 @@
     <string name="caution_experimental">Experimental feature! Use with precaution.</string>
     <string name="hint_ip">IP address</string>
     <string name="action_server">Connect to server</string>
+    <string name="divider_of">of</string>
+    <string name="action_request_problem">Request a problem</string>
+    <string name="action_ping">Ping</string>
+    <string name="error_connectivity">Uh-uh-uh, check your connectivity.</string>
+    <string name="tip_connection_wait">Trying to connect, please wait...</string>
+    <string name="error_connection">Something is wrong with the connection.</string>
+    <string name="tip_ping_success">Pong! You can proceed with receiving problems.</string>
+    <string name="tip_problem_success">Got a problem, displaying...</string>
 
 </resources>

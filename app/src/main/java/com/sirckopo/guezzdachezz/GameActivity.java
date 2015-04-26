@@ -483,7 +483,8 @@ public class GameActivity extends ActionBarActivity {
         llBase.postDelayed(new Runnable() {
             @Override
             public void run() {
-                progressStorage.writeLastCompleted(problemSet, currentId);
+                if (currentId > progressStorage.getLastCompleted(problemSet))
+                    progressStorage.writeLastCompleted(problemSet, currentId);
                 currentId += 1;
                 getProblem();
             }

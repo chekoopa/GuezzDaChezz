@@ -24,7 +24,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Request a problem"
+        android:text="@string/action_request_problem"
         android:id="@+id/btnGo"
         android:layout_below="@+id/txtIP"
         android:layout_alignParentLeft="true"
@@ -34,7 +34,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Ping"
+        android:text="@string/action_ping"
         android:id="@+id/btnPing"
         android:layout_below="@+id/btnGo"
         android:layout_alignParentLeft="true"

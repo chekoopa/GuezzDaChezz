@@ -32,28 +32,23 @@ public class ServerConnectionActivity extends ActionBarActivity {
     }
 
     public void processProblem() {
-        String answer;
-        if (isNetworkAvailable()) {
-            answer = JSONOperator.get();
-            if (answer.length() == 0) {
-                answer = "Something is wrong with the connection.";
-            } else {
-                try {
-                    JSONObject json = new JSONObject(answer);
-                    Intent intent = new Intent(this, GameActivity.class);
-                    intent.putExtra("set", "server");
-                    intent.putExtra("fen", json.getString("fen"));
-                    intent.putExtra("solutions", json.getString("solutions"));
-                    intent.putExtra("answers", json.getString("answers"));
-                    answer = "Got a problem, main screen turn on";
-                    startActivity(intent);
-                } catch (JSONException e) {
-                    answer = "Something is wrong with the connection.";
-                    e.printStackTrace();
-                }
-            }
+        String answer = JSONOperator.get();
+        if (answer.length() == 0) {
+            answer = getString(R.string.error_connection);
         } else {
-            answer = "Uh-uh-uh, you'd better check your network";
+            try {
+                JSONObject json = new JSONObject(answer);
+                Intent intent = new Intent(this, GameActivity.class);
+                intent.putExtra("set", "server");
+                intent.putExtra("fen", json.getString("fen"));
+                intent.putExtra("solutions", json.getString("solutions"));
+                intent.putExtra("answers", json.getString("answers"));
+                answer = getString(R.string.tip_problem_success);
+                startActivity(intent);
+            } catch (JSONException e) {
+                answer = getString(R.string.error_connection);
+                e.printStackTrace();
+            }
         }
         lblStatus.setText(answer);
         butPing.setEnabled(true);
@@ -61,22 +56,17 @@ public class ServerConnectionActivity extends ActionBarActivity {
     }
 
     public void processPing() {
-        String answer;
-        if (isNetworkAvailable()) {
-            answer = JSONOperator.get();
-            try {
-                JSONObject json = new JSONObject(answer);
-                if (json.getString("answer").equalsIgnoreCase("pong")) {
-                    answer = "Pong! You can proceed with receiving problems.";
-                } else {
-                    answer = "Something is wrong with the connection.";
-                }
-            } catch (JSONException e) {
-                answer = "Something is wrong with the connection.";
-                e.printStackTrace();
+        String answer = JSONOperator.get();
+        try {
+            JSONObject json = new JSONObject(answer);
+            if (json.getString("answer").equalsIgnoreCase("pong")) {
+                answer = getString(R.string.tip_ping_success);
+            } else {
+                answer = getString(R.string.error_connection);
             }
-        } else {
-            answer = "Uh-uh-uh, you'd better check your network";
+        } catch (JSONException e) {
+            answer = getString(R.string.error_connection);
+            e.printStackTrace();
         }
         lblStatus.setText(answer);
         butPing.setEnabled(true);
@@ -91,11 +81,6 @@ public class ServerConnectionActivity extends ActionBarActivity {
     }
 
     public void getAProblem(View v) {
-        if (!isNetworkAvailable())
-            lblStatus.setText("Uh-uh-uh, check your connectivity.");
-        butPing.setEnabled(false);
-        butProblem.setEnabled(false);
-        lblStatus.setText("Please wait, trying to connect...");
         sendJSON("{\"type\": \"random\"}", new Runnable() {
             @Override
             public void run() {
@@ -105,11 +90,6 @@ public class ServerConnectionActivity extends ActionBarActivity {
     }
 
     public void makeAPing(View v) {
-        if (!isNetworkAvailable())
-            lblStatus.setText("Uh-uh-uh, check your connectivity.");
-        butPing.setEnabled(false);
-        butProblem.setEnabled(false);
-        lblStatus.setText("Please wait, trying to connect...");
         sendJSON("{\"type\": \"ping\"}", new Runnable() {
             @Override
             public void run() {
@@ -120,6 +100,11 @@ public class ServerConnectionActivity extends ActionBarActivity {
 
     private void sendJSON(String line, Runnable finish) {
         if (!JSONOperator.isTaskFree()) return;
+        if (!isNetworkAvailable())
+            lblStatus.setText(getString(R.string.error_connectivity));
+        butPing.setEnabled(false);
+        butProblem.setEnabled(false);
+        lblStatus.setText(getString(R.string.tip_connection_wait));
         JSONOperator.send(line, txtIP.getText().toString(), 13373, finish);
     }
 
