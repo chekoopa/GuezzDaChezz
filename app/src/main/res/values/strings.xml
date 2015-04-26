@@ -35,7 +35,7 @@
     <string name="action_reset_progress_confirm">Press again to confirm</string>
     <string name="action_reset_progress_done">KABOOM!</string>
     <string name="about_text">Personal student project of Mikhail \'Sir Ckopo\' Chekan, made for Samsung IT-School @ Irkutsk, Russia.\n\n
-Planned as a part of another mine chess project, stay tuned.</string>
+Planned as a part of another my chess project, stay tuned.</string>
     <string name="action_about">About/Settings</string>
     <string name="tip_game_over">Uh-uh-uh, the game is already over.</string>
     <string name="tip_checkmate">Checkmate!!!</string>
