@@ -130,7 +130,7 @@ public class ChessLayout {
 		output += (char)('0' + enpassant[1]);
 		return output;
 	}
-	
+
 	public boolean getQueenSideCastling(boolean side) {
 		return castling[side ? 1 : 0] % 2 == 1;
 	}
@@ -367,7 +367,8 @@ public class ChessLayout {
 
 		}
 
-        // implementing castling bit changes on rook capture is no need. Just in case.
+        // implementing castling bit changes on rook capture is no need, as it only makes FEN
+        // more clear and beautiful. your humble is too lazy for that.
 
 		if (enpassant[1] != (move ? 6 : 3)) {
 			enpassant = new int[2];
@@ -575,7 +576,7 @@ public class ChessLayout {
 	   }
 	   for(i=-1; getBoard(x+i, y-i)==fEmpty; i--)
 	      {if(!areXYOnBoard(x+i,y-i)){break;}}
-	   if (areXYOnBoard(x+i,y-i))
+	   if (areXYOnBoard(x + i, y - i))
 	   {
 	      if(getBoard(x+i, y-i)==(fmove ? fBlack : 0) + fBishop) {return true;}
 	      if(getBoard(x+i, y-i)==(fmove ? fBlack : 0) + fQueen) {return true;}
@@ -624,30 +625,57 @@ public class ChessLayout {
 		if (!isMoveCorrect(m)) {
 			//throw new IllegalArgumentException("Incorrect move " +
 			//		                           m.getString());
-            //NOTE: let's try to make it less killing
-            return false;
+			//NOTE: let's try to make it less killing
+			return false;
 		}
+
+		int[][] xboard = new int[size][size];
+		for (int i = 0; i < size; i++) {
+			xboard[i] = board[i].clone();
+		}
+		boolean xmove = move;
+		int[] xcastling = castling.clone();
+		int[] xenpassant = enpassant.clone();
+
+		int[] mc = m.getCode();
+
+		_do_move(mc[0], mc[1], mc[2], mc[3], mc[4]);
+
+		if (isCheck(!move)) {
+			board = xboard;
+			move = xmove;
+			castling = xcastling;
+			enpassant = xenpassant;
+			return false;
+		}
+
+		return true;
+	}
+
+	public boolean tryMove(ChessMove m) {
+        if (!isMoveCorrect(m))
+            return false;
 
         int[][] xboard = new int[size][size];
         for (int i = 0; i < size; i++) {
             xboard[i] = board[i].clone();
         }
-		boolean xmove = move;
-		int[] xcastling = castling.clone();
-		int[] xenpassant = enpassant.clone();
-		
-		int[] mc = m.getCode();
-		
-	    _do_move(mc[0], mc[1], mc[2], mc[3], mc[4]);
-	    
-	    if (isCheck(!move)) {
-	    	board = xboard; move = xmove; 
-	    	castling = xcastling; enpassant = xenpassant; 
-	    	return false;
-	    }
-   			        
-	    return true;
-	}
+        boolean xmove = move;
+        int[] xcastling = castling.clone();
+        int[] xenpassant = enpassant.clone();
+
+        int[] mc = m.getCode();
+
+        _do_move(mc[0], mc[1], mc[2], mc[3], mc[4]);
+
+        boolean result = isCheck(!move);
+        board = xboard;
+        move = xmove;
+        castling = xcastling;
+        enpassant = xenpassant;
+
+        return result;
+    }
 	
 	public LinkedList<ChessMove> moveBuffer(int x, int y) {
 		return moveBufferFigure(x, y, getBoard(x, y));
@@ -763,7 +791,17 @@ public class ChessLayout {
    		}
 		return mbuf;
 	}
-	
+
+    public void setDepth(int d) {
+        if (d < 0 || d > 10)
+            throw new IllegalArgumentException("Incorrect depth " + String.valueOf(d));
+        depth = d;
+    }
+
+    public int getDepth() {
+        return depth;
+    }
+
 	public String getTextBoard() {
 		String o = "";
 		for (int y = size; y > 0; y++) {
