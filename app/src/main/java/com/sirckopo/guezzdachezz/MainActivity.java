@@ -25,6 +25,7 @@ public class MainActivity extends ActionBarActivity {
     Button butServerPlay;
     Button butOneMove1;
     Button butTwoMove1;
+    Button butKeeper;
     Button butAbout;
 
     ImageView iwLogo;
@@ -121,6 +122,15 @@ public class MainActivity extends ActionBarActivity {
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT, 1));
 
+        butKeeper = new Button(this);
+        butKeeper.setBackgroundResource(R.drawable.greenhitechbutton);
+        butKeeper.setText(getString(R.string.action_keeper));
+        butKeeper.setId(R.id.butKeeper);
+        butKeeper.setOnClickListener(sendToGame);
+        lButtons.addView(butKeeper, new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT, 1));
+
         butAbout = new Button(this);
         butAbout.setBackgroundResource(R.drawable.greenhitechbutton);
         butAbout.setText(getString(R.string.action_about));
@@ -154,6 +164,9 @@ public class MainActivity extends ActionBarActivity {
                 return;
             case R.id.butServerPlay:
                 intent = new Intent(this, ServerConnectionActivity.class);
+                break;
+            case R.id.butKeeper:
+                intent = new Intent(this, CustomLayoutActivity.class);
                 break;
             case R.id.butAbout:
                 intent = new Intent(this, AboutActivity.class);

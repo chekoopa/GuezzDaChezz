@@ -699,7 +699,6 @@ public class ChessLayout {
 				 fEmpty && getBoard(x, y + (move ? -2 : 2)) == fEmpty) {
 				mbuf.push(new ChessMove(x, y, x, y + (move ? -2 : 2)));
 			}
-            // TODO: make en-passant work
 			if (isPlaceable(x + 1, y + (move ? -1 : 1), move))
 				if (getBoard(x + 1, y + (move ? -1 : 1)) != fEmpty ||
 				    (x + 1 == enpassant[0] && y + (move ? -1 : 1) == enpassant[1])) {
@@ -802,6 +801,14 @@ public class ChessLayout {
         return depth;
     }
 
+	public boolean getCoop() {
+        return coop;
+    }
+
+    public void setCoop(boolean nc) {
+        coop = nc;
+    }
+
 	public String getTextBoard() {
 		String o = "";
 		for (int y = size; y > 0; y++) {
@@ -817,7 +824,7 @@ public class ChessLayout {
 	}
 	
 	public String getTextCondition() {
-		return (getMove() ? "Black" : "White") + " " + (depth > 0 ? 
+		return (getMove() ? "Black" : "White") + " " + (depth > 0 ?
 				"starts and " + (coop ? "self" : "") + "mates in " +
 				String.valueOf(depth): "moves");
 	}

@@ -3,6 +3,9 @@
     <style name="AppTheme" parent="Theme.AppCompat">
         <item name="android:textColor">#fff</item>
         <item name="android:typeface">monospace</item>
+        <item name="colorControlNormal">#ff005405</item>
+        <item name="colorControlActivated">#ffa1d10b</item>
+        <item name="colorControlHighlight">#f49bff00</item>
     </style>
 
     <style name="AppTheme.NoActionBar" parent="AppTheme">

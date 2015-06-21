@@ -22,18 +22,31 @@
             </intent-filter>
         </activity>
         <activity
-            android:theme="@style/AppTheme"
             android:name=".GameActivity"
-            android:label="" >
+            android:label=""
+            android:theme="@style/AppTheme" >
         </activity>
         <activity
-            android:theme="@style/AppTheme"
+            android:parentActivityName=".MainActivity"
             android:name=".ServerConnectionActivity"
-            android:label="@string/title_activity_server_connection" >
+            android:label="@string/title_activity_server_connection"
+            android:theme="@style/AppTheme" >
         </activity>
         <activity
+            android:parentActivityName=".MainActivity"
             android:name=".AboutActivity"
             android:label="@string/title_activity_about" >
+        </activity>
+        <activity
+            android:parentActivityName=".MainActivity"
+            android:name=".CustomLayoutActivity"
+            android:label="@string/title_activity_custom_layout"
+            android:theme="@style/AppTheme" >
+        </activity>
+        <activity
+            android:name=".LayoutEditorActivity"
+            android:label=""
+            android:theme="@style/AppTheme">
         </activity>
     </application>
 

@@ -1,6 +1,7 @@
 package com.sirckopo.guezzdachezz;
 
 
+import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
@@ -516,13 +517,13 @@ public class GameActivity extends ActionBarActivity {
     }
 
     private void makeLevelUp() {
-        for (Button btn : butSquares) {
-            AnimatorSet animSet = new AnimatorSet();
-            animSet.playTogether(
-                    ObjectAnimator.ofFloat(btn, "alpha", 1f, 0.1f, 1f));
-            animSet.setDuration(500);
-            animSet.start();
-        }
+        LinkedList<Animator> animList = new LinkedList<>();
+        for (Button btn : butSquares)
+            animList.add(ObjectAnimator.ofFloat(btn, "alpha", 1f, 0.1f, 1f));
+        AnimatorSet animSet = new AnimatorSet();
+        animSet.playTogether(animList);
+        animSet.setDuration(500);
+        animSet.start();
         delayLevelUp();
     }
 
@@ -562,16 +563,16 @@ public class GameActivity extends ActionBarActivity {
     }
 
     private void greetAndFinish() {
-        AlertDialog.Builder dlgAlert2 = new AlertDialog.Builder(this);
-        dlgAlert2.setMessage(getString(R.string.dialog_greeting));
-        dlgAlert2.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+        AlertDialog.Builder dlgAlert = new AlertDialog.Builder(this);
+        dlgAlert.setMessage(getString(R.string.dialog_greeting));
+        dlgAlert.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
                 CloseActivity();
             }
         });
-        dlgAlert2.show();
+        dlgAlert.show();
     }
 
     private void CloseActivity() {

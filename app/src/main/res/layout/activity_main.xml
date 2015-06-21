@@ -65,4 +65,12 @@
         android:layout_below="@+id/butTwoMove"
         android:layout_centerHorizontal="true" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Keeper"
+        android:id="@+id/butKeeper"
+        android:layout_below="@+id/butAbout"
+        android:layout_centerHorizontal="true" />
+
 </RelativeLayout>

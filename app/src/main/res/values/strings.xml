@@ -43,5 +43,23 @@ Planned as a part of another my chess project, stay tuned.</string>
     <string name="tip_king_attacked">The king is still under attack!</string>
     <string name="dialog_greeting">Problem pack completed! Good job!</string>
     <string name="ok">OK</string>
+    <string name="title_activity_custom_layout">Custom Boards</string>
+    <string name="action_keeper">Custom Boards</string>
+    <string name="action_add_layout">New Board</string>
+    <string name="action_play">Play</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_solve">Solve</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_rename">Rename</string>
+    <string name="title_activity_layout_editor">Layout Editor</string>
+    <string name="dialog_name_entry">Please enter the name</string>
+    <string name="error_bad_name">Bad board name!</string>
+    <string name="error_name_exists">The board \'%s\' already exists!</string>
+    <string name="dialog_delete">Are you sure you want to delete</string>
+    <string name="chess_moves">moves</string>
+    <string name="chess_mates">mates in</string>
+    <string name="chess_selfmates">selfmates in</string>
+    <string name="action_board_data">Board data</string>
+    <string name="action_preferences">Preferences</string>
 
 </resources>

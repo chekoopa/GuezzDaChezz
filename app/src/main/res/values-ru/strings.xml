@@ -42,4 +42,20 @@
     <string name="tip_king_attacked">Король всё еще под ударом!</string>
     <string name="dialog_greeting">Набор задач прорешан! Так держать!</string>
     <string name="ok">ОК</string>
+    <string name="action_add_layout">Новая доска</string>
+    <string name="action_delete">Удалить</string>
+    <string name="action_edit">Править</string>
+    <string name="action_keeper">Свои доски</string>
+    <string name="action_play">Играть</string>
+    <string name="action_solve">Прорешать</string>
+    <string name="title_activity_custom_layout">Свои доски</string>
+    <string name="action_rename">Переименовать</string>
+    <string name="error_name_exists">Доска с именем \'%s\' уже существует!</string>
+    <string name="dialog_name_entry">Пожалуйста, введите имя</string>
+    <string name="error_bad_name">Неправильное имя доски!</string>
+    <string name="title_activity_layout_editor">Редактор доски</string>
+    <string name="dialog_delete">Вы уверены, что хотите удалить</string>
+    <string name="chess_moves">ходят</string>
+    <string name="chess_mates">ставят мат в</string>
+    <string name="chess_selfmates">проигрывают в </string>
 </resources>
