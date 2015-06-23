@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -38,9 +39,12 @@ public class GameActivity extends ActionBarActivity {
     
     MenuItem miMoveIndicator;
     MenuItem miHint;
+    MenuItem miWriteLayout;
     MenuItem miLevelIndicator;
     MenuItem miReset;
     MenuItem miFreeplay;
+
+    boolean canWriteLayouts = false;
 
     private int screenWidth;
     private int screenHeight;
@@ -76,9 +80,11 @@ public class GameActivity extends ActionBarActivity {
         if (savedInstanceState != null) {
             problemSet = savedInstanceState.getString("set");
             currentId = savedInstanceState.getInt("id");
+            canWriteLayouts = savedInstanceState.getBoolean("writer");
         } else {
             problemSet = intent.getStringExtra("set");
             currentId = intent.getIntExtra("id", 0);
+            canWriteLayouts = intent.getBooleanExtra("writer", false);
         }
 
         if (problemSet == null) {
@@ -115,6 +121,7 @@ public class GameActivity extends ActionBarActivity {
         outState.putString("board", lMain.getFEN());
         outState.putString("set", problemSet);
         outState.putInt("id", currentId);
+        outState.putBoolean("writer", canWriteLayouts);
     }
 
     @Override
@@ -130,6 +137,7 @@ public class GameActivity extends ActionBarActivity {
         inflater.inflate(R.menu.menu_game, menu);
         miMoveIndicator = menu.findItem(R.id.action_king);
         miHint = menu.findItem(R.id.action_hint);
+        miWriteLayout = menu.findItem(R.id.action_write_layout);
         miLevelIndicator = menu.findItem(R.id.action_level);
         miReset = menu.findItem(R.id.action_reset);
         miFreeplay = menu.findItem(R.id.action_freeplay);
@@ -150,6 +158,10 @@ public class GameActivity extends ActionBarActivity {
                 Intent intent = new Intent(this, GameActivity.class);
                 intent.putExtra("fen", baseFEN);
                 startActivity(intent);
+                return true;
+            case R.id.action_write_layout:
+                writeLayout();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -295,11 +307,13 @@ public class GameActivity extends ActionBarActivity {
             miHint.setVisible(solutions != null && solutions.length != 0);
         if (miLevelIndicator != null)
             miLevelIndicator.setTitle(currentId != 0 ? String.valueOf(currentId) :
-                                          getString(R.string.status_freeplay));
+                    getString(R.string.status_freeplay));
         if (miReset != null)
             miReset.setVisible(solutions == null || solutions.length == 0);
         if (miFreeplay != null)
             miFreeplay.setVisible(solutions != null && solutions.length != 0);
+        if (miWriteLayout != null)
+            miWriteLayout.setVisible(canWriteLayouts);
     }
 
     private void moveReset() {
@@ -579,4 +593,37 @@ public class GameActivity extends ActionBarActivity {
         this.finish();
     }
 
+    CustomLayoutStorage customLayoutStorage = new CustomLayoutStorage(this);
+
+    void writeLayout() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle(getString(R.string.dialog_name_entry));
+        final EditText input = new EditText(this);
+        input.setSingleLine(true);
+        alert.setView(input);
+
+        alert.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                String value = input.getText().toString().trim();
+                if (value.length() == 0) {
+                    Toast.makeText(GameActivity.this, getString(R.string.error_bad_name),
+                            Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (!customLayoutStorage.write(value, lMain.getFEN())) {
+                    Toast.makeText(GameActivity.this,
+                            getString(R.string.error_name_exists).replace("%s", value),
+                            Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Toast.makeText(GameActivity.this, getString(R.string.tip_saved)
+                        .replace("%s", value), Toast.LENGTH_SHORT).show();
+            }
+        });
+        alert.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+            }
+        });
+        alert.show();
+    }
 }

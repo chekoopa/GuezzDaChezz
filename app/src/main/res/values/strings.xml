@@ -58,8 +58,33 @@ Planned as a part of another my chess project, stay tuned.</string>
     <string name="dialog_delete">Are you sure you want to delete</string>
     <string name="chess_moves">moves</string>
     <string name="chess_mates">mates in</string>
-    <string name="chess_selfmates">selfmates in</string>
-    <string name="action_board_data">Board data</string>
+    <string name="chess_helpmates">helpmates in</string>
+    <string name="action_board_data">Board</string>
     <string name="action_preferences">Preferences</string>
+    <string name="chess_move_white">White move</string>
+    <string name="chess_move_black">Black move</string>
+    <string name="chess_depth_pre">Mate in</string>
+    <string name="chess_no_mate">No mate</string>
+    <string name="chess_mate_direct">Directmate</string>
+    <string name="chess_mate_help">Helpmate</string>
+    <string name="action_revert">Revert changes</string>
+    <string name="action_import">Import FEN</string>
+    <string name="action_export">Export FEN</string>
+    <string name="action_save">Save</string>
+    <string name="action_clear">Clear</string>
+    <string name="dialog_save_exit">Do you want to save \'%s\' before exiting?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="tip_saved">Saved \'%s\'!</string>
+    <string name="error_bad_layout">There\'s something wrong with this layout!</string>
+    <string name="dialog_export_fen">Get your FEN</string>
+    <string name="dialog_import_fen">Import your FEN</string>
+    <string name="tip_import">Imported successfully!</string>
+    <string name="error_bad_fen">This FEN record is bad or corrupted.</string>
+    <string name="error_solve">Couldn\'t solve this layout</string>
+    <string name="tip_no_solutions">No solutions</string>
+    <string name="tip_solve_wait">Solving. Please, wait...</string>
+    <string name="action_write_layout">Write Layout</string>
+    <string name="action_copy">Copy</string>
 
 </resources>

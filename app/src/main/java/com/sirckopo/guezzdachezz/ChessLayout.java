@@ -668,7 +668,7 @@ public class ChessLayout {
 
         _do_move(mc[0], mc[1], mc[2], mc[3], mc[4]);
 
-        boolean result = isCheck(!move);
+        boolean result = !isCheck(!move);
         board = xboard;
         move = xmove;
         castling = xcastling;
@@ -832,7 +832,22 @@ public class ChessLayout {
 	public String getTextLayout() {
 		return getTextBoard() + "\n" + getTextCondition();
 	}
-	
+
+	public void copy(ChessLayout cl) {
+		for (int x = 1; x <= size; x++) for (int y = 1; y <= size; y++)
+			setBoard(x, y, cl.getBoard(x, y));
+		setMove(cl.getMove());
+		setKingSideCastling(true, cl.getKingSideCastling(true));
+		setKingSideCastling(false, cl.getKingSideCastling(false));
+		setQueenSideCastling(true, cl.getQueenSideCastling(true));
+		setQueenSideCastling(false, cl.getQueenSideCastling(false));
+		String enpass = cl.getEnPassantSquare();
+		enpassant[0] = enpass.charAt(0) - 96;
+		enpassant[1] = enpass.charAt(1) - '0';
+		setDepth(cl.getDepth());
+		setCoop(cl.getCoop());
+	}
+
 	// private data ...
 	private int[][] board = new int[size][size];
 	private boolean move = false;

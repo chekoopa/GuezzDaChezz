@@ -155,6 +155,7 @@ public class MainActivity extends ActionBarActivity {
             case R.id.butGame:
                 intent = new Intent(this, GameActivity.class);
                 intent.putExtra("id", 0);
+                intent.putExtra("writer", true);
                 break;
             case R.id.butOneMove:
                 showLevelSelect("onemove_1");

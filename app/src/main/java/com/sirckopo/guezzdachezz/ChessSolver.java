@@ -30,57 +30,62 @@ public class ChessSolver {
                 if (l.getBoard(x, y) != ChessLayout.fEmpty &&
                         l.getBoard(x, y) / ChessLayout.fBlack == (l.getMove() ? 1 : 0)) {
                     LinkedList<ChessMove> mbuf = l.moveBuffer(x, y);
-                    for (ChessMove cm : mbuf) if (l.tryMove(cm)) {
-                        if (l.getBoardFigure(x, y) == ChessLayout.fPawn &&
-                                cm.getCode(3) == (l.getMove() ? 1 : 8))
-                            output += 4;
-                        else
-                            output += 1;
+                    for (ChessMove cm : mbuf) {
+                        if (l.tryMove(cm)) {
+                            if (l.getBoardFigure(cm.getCode(2), cm.getCode(3)) ==
+                                    ChessLayout.fPawn && cm.getCode(3) == (l.getMove() ? 1 : 8))
+                                output += 4;
+                            else
+                                output += 1;
+                        }
                     }
-            }
-
+                }
             return output;
         }
 
         boolean solveInOne(ChessLayout inlay) {
             // parsed_layouts++
-            ChessLayout l = inlay;
+            ChessLayout l = new ChessLayout();
+            l.copy(inlay);
 
             for (int x = 1; x <= ChessLayout.size; x++) for (int y = 1; y <= ChessLayout.size; y++)
                 if (l.getBoard(x, y) != ChessLayout.fEmpty &&
                         l.getBoard(x, y) / ChessLayout.fBlack == (l.getMove() ? 1 : 0)) {
                     LinkedList<ChessMove> mbuf = l.moveBuffer(x, y);
-                    for (ChessMove cm : mbuf) if (l.doMove(cm)) {
-                        if (l.getBoardFigure(x, y) == ChessLayout.fPawn &&
-                                cm.getCode(3) == (!l.getMove() ? 1 : 8)) {
-                            for (int i = ChessLayout.fKnight; i <= ChessLayout.fQueen; i++) {
-                                l.setBoard(cm.getCode(2), cm.getCode(3), ChessLayout.fPawn +
-                                        (l.getMove() ? 0 : ChessLayout.fBlack));
+                    for (ChessMove cm : mbuf) {
+                        if (l.doMove(cm)) {
+                            if (l.getBoardFigure(cm.getCode(2), cm.getCode(3)) ==
+                                    ChessLayout.fPawn && cm.getCode(3) == (!l.getMove() ? 1 : 8)) {
+                                for (int i = ChessLayout.fKnight; i <= ChessLayout.fQueen; i++) {
+                                    l.setBoard(cm.getCode(2), cm.getCode(3), ChessLayout.fPawn +
+                                            (l.getMove() ? 0 : ChessLayout.fBlack));
+                                    if (l.isCheckmate(l.getMove()))
+                                        return true;
+                                }
+                            } else {
                                 if (l.isCheckmate(l.getMove()))
                                     return true;
                             }
-                        } else {
-                            if (l.isCheckmate(l.getMove()))
-                                return true;
+                            l.copy(inlay);
                         }
-                        l = inlay;
                     }
-            }
+                }
             return false;
         }
 
         private void solutionsInOne(ChessLayout inlay) {
             // parsed_layouts++
-            ChessLayout l = inlay;
+            ChessLayout l = new ChessLayout();
+            l.copy(inlay);
 
             for (int x = 1; x <= ChessLayout.size; x++) for (int y = 1; y <= ChessLayout.size; y++)
                 if (l.getBoard(x, y) != ChessLayout.fEmpty &&
                         l.getBoard(x, y) / ChessLayout.fBlack == (l.getMove() ? 1 : 0)) {
                     LinkedList<ChessMove> mbuf = l.moveBuffer(x, y);
-                    for (ChessMove cm : mbuf)
+                    for (ChessMove cm : mbuf) {
                         if (l.doMove(cm)) {
-                            if (l.getBoardFigure(x, y) == ChessLayout.fPawn &&
-                                    cm.getCode(3) == (!l.getMove() ? 1 : 8)) {
+                            if (l.getBoardFigure(cm.getCode(2), cm.getCode(3)) ==
+                                    ChessLayout.fPawn && cm.getCode(3) == (!l.getMove() ? 1 : 8)) {
                                 for (int i = ChessLayout.fKnight; i <= ChessLayout.fQueen; i++) {
                                     l.setBoard(cm.getCode(2), cm.getCode(3), ChessLayout.fPawn +
                                             (l.getMove() ? 0 : ChessLayout.fBlack));
@@ -91,13 +96,16 @@ public class ChessSolver {
                                 if (l.isCheckmate(l.getMove()))
                                     solutions.add(cm);
                             }
-                            l = inlay;
+                            l.copy(inlay);
                         }
+                    }
                 }
         }
 
         boolean solveFirst(ChessLayout inlay, int depth) {
             // parsed_layouts++
+
+            boolean result = false;
 
             boolean inOne = solveInOne(inlay);
             if (inOne) {
@@ -108,36 +116,47 @@ public class ChessSolver {
             if (depth == 1)
                 return false;
 
-            ChessLayout l = inlay;
+            ChessLayout l = new ChessLayout();
+            l.copy(inlay);
+
             for (int x = 1; x <= ChessLayout.size; x++) for (int y = 1; y <= ChessLayout.size; y++)
                 if (l.getBoard(x, y) != ChessLayout.fEmpty &&
                         l.getBoard(x, y) / ChessLayout.fBlack == (l.getMove() ? 1 : 0)) {
                     LinkedList<ChessMove> mbuf = l.moveBuffer(x, y);
-                    for (ChessMove cm : mbuf) if (l.doMove(cm)) {
-                        if (l.getBoardFigure(x, y) == ChessLayout.fPawn &&
-                                cm.getCode(3) == (!l.getMove() ? 1 : 8)) {
-                            for (int i = ChessLayout.fKnight; i <= ChessLayout.fQueen; i++) {
-                                l.setBoard(cm.getCode(2), cm.getCode(3), ChessLayout.fPawn +
-                                        (l.getMove() ? 0 : ChessLayout.fBlack));
-                                cm.setString(cm.getString() + ChessLayout.tFigures.charAt(i));
-                                if (solveSecond(l, depth - 1) && depth == minDepth)
-                                    solutions.add(cm);
+                    for (ChessMove cm : mbuf) {
+                        if (l.doMove(cm)) {
+                            if (isCancelled()) return false; // BIG ASYNC BREAK
+                            if (l.getBoardFigure(cm.getCode(2), cm.getCode(3)) ==
+                                    ChessLayout.fPawn && cm.getCode(3) == (!l.getMove() ? 1 : 8)) {
+                                for (int i = ChessLayout.fKnight; i <= ChessLayout.fQueen; i++) {
+                                    l.setBoard(cm.getCode(2), cm.getCode(3), ChessLayout.fPawn +
+                                            (l.getMove() ? 0 : ChessLayout.fBlack));
+                                    cm.setString(cm.getString() + ChessLayout.tFigures.charAt(i));
+                                    if (solveSecond(l, depth - 1)) {
+                                        result = true;
+                                        if (depth == minDepth)
+                                            solutions.add(cm);
+                                    }
+                                }
+                            } else {
+                                if (solveSecond(l, depth - 1)) {
+                                    result = true;
+                                    if (depth == minDepth)
+                                        solutions.add(cm);
+                                }
                             }
-                        } else {
-                            if (solveSecond(l, depth - 1) && depth == minDepth)
-                                solutions.add(cm);
+                            if (depth == minDepth) {
+                                firstDone++;
+                                this.publishProgress(String.valueOf(firstDone) + " / " +
+                                        String.valueOf(firstNeed));
+                            }
+                            l.copy(inlay);
                         }
-                        l = inlay;
                     }
-                    if (depth == minDepth) {
-                        firstDone++;
-                        this.onProgressUpdate(String.valueOf(firstDone) + " / " +
-                                String.valueOf(firstNeed) + " (" +
-                                String.valueOf(firstNeed / firstDone) + "%)");
-                    }
+
                 }
 
-            return false;
+            return result;
         }
 
         boolean solveSecond(ChessLayout inlay, int depth) {
@@ -146,28 +165,32 @@ public class ChessSolver {
             if (depth == 1 || solveInOne(inlay))
                 return false;
 
-            ChessLayout l = inlay;
+            ChessLayout l = new ChessLayout();
+            l.copy(inlay);
             for (int x = 1; x <= ChessLayout.size; x++) for (int y = 1; y <= ChessLayout.size; y++)
                 if (l.getBoard(x, y) != ChessLayout.fEmpty &&
                         l.getBoard(x, y) / ChessLayout.fBlack == (l.getMove() ? 1 : 0)) {
                     LinkedList<ChessMove> mbuf = l.moveBuffer(x, y);
-                    for (ChessMove cm : mbuf) if (l.doMove(cm)) {
-                        if (l.getBoardFigure(x, y) == ChessLayout.fPawn &&
-                                cm.getCode(3) == (!l.getMove() ? 1 : 8)) {
-                            for (int i = ChessLayout.fKnight; i <= ChessLayout.fQueen; i++) {
-                                l.setBoard(cm.getCode(2), cm.getCode(3), ChessLayout.fPawn +
-                                        (l.getMove() ? 0 : ChessLayout.fBlack));
-                                if (solveFirst(l, depth - 1))
+                    for (ChessMove cm : mbuf) {
+                        if (l.doMove(cm)) {
+                            if (isCancelled()) return false; // BIG ASYNC BREAK
+                            if (l.getBoardFigure(cm.getCode(2), cm.getCode(3)) ==
+                                    ChessLayout.fPawn && cm.getCode(3) == (!l.getMove() ? 1 : 8)) {
+                                for (int i = ChessLayout.fKnight; i <= ChessLayout.fQueen; i++) {
+                                    l.setBoard(cm.getCode(2), cm.getCode(3), ChessLayout.fPawn +
+                                            (l.getMove() ? 0 : ChessLayout.fBlack));
+                                    if (!solveFirst(l, depth - 1))
+                                        return false;
+                                }
+                            } else {
+                                if (!solveFirst(l, depth - 1))
                                     return false;
                             }
-                        } else {
-                            if (solveFirst(l, depth - 1))
-                                return false;
+                            l.copy(inlay);
                         }
-                        l = inlay;
                     }
                 }
-            return false;
+            return true;
         }
 
         @Override
@@ -199,8 +222,10 @@ public class ChessSolver {
         @Override
         protected void onProgressUpdate(String... values) {
             super.onProgressUpdate(values);
+            strStatus = values[0];
+            if (onUpdate != null)
+                onUpdate.run();
             Log.i("GDC", "Solver sez " + values[0]);
-            //TODO: prettier progress notifier?
         }
 
         @Override
@@ -214,6 +239,13 @@ public class ChessSolver {
 
     private static SolverTask task;
     private static Runnable onFinish;
+    private static Runnable onUpdate;
+
+    private static String strStatus = "";
+
+    public static String getSolveStatus() {
+        return strStatus;
+    }
 
     public static void cancel() {
         if (isTaskFree()) return;
@@ -222,13 +254,21 @@ public class ChessSolver {
 
     public static void solve(String fen) {
         task = new SolverTask();
+        onFinish = null;
+        onUpdate = null;
         task.execute(fen);
     }
 
-    public static void solve(String fen, Runnable run) {
+    public static void solve(String fen, Runnable run, Runnable runUpd) {
         task = new SolverTask();
         onFinish = run;
+        onUpdate = runUpd;
         task.execute(fen);
+    }
+
+    public static void updateRunnables(Runnable run, Runnable runUpd) {
+        onFinish = run;
+        onUpdate = runUpd;
     }
 
     public static boolean isTaskFree() {

@@ -1,6 +1,7 @@
 package com.sirckopo.guezzdachezz;
 
 import android.app.AlertDialog;
+import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -62,8 +63,8 @@ public class CustomLayoutActivity extends ActionBarActivity {
 
     private void openDialog(final String name) {
         String[] itemsArray = {getString(R.string.action_play), getString(R.string.action_edit),
-                getString(R.string.action_solve), getString(R.string.action_rename),
-                getString(R.string.action_delete)};
+                getString(R.string.action_solve), getString(R.string.action_copy),
+                getString(R.string.action_rename), getString(R.string.action_delete)};
 
         AlertDialog.Builder dlgAlert = new AlertDialog.Builder(this);
 
@@ -82,9 +83,12 @@ public class CustomLayoutActivity extends ActionBarActivity {
                         solveLayout(name);
                         break;
                     case 3:
-                        renameLayout(name);
+                        copyLayout(name);
                         break;
                     case 4:
+                        renameLayout(name);
+                        break;
+                    case 5:
                         deleteLayout(name);
                         break;
                 }
@@ -181,9 +185,43 @@ public class CustomLayoutActivity extends ActionBarActivity {
         alert.show();
     }
 
+    void copyLayout(final String name) {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle(getString(R.string.dialog_name_entry));
+        final EditText input = new EditText(this);
+        input.setSingleLine(true);
+        input.setText(name);
+        alert.setView(input);
+
+        alert.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                String value = input.getText().toString().trim();
+                if (value.length() == 0) {
+                    Toast.makeText(CustomLayoutActivity.this, getString(R.string.error_bad_name),
+                            Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (name.equals(value)) {
+                    return;
+                }
+                if (!customLayoutStorage.write(value, customLayoutStorage.read(name))) {
+                    overwriteLayoutWarn(value);
+                    return;
+                }
+                updateList();
+            }
+        });
+        alert.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+            }
+        });
+        alert.show();
+    }
+
     void sendToGame(final String name) {
         Intent intent = new Intent(this, GameActivity.class);
         intent.putExtra("fen", customLayoutStorage.read(name));
+        intent.putExtra("writer", true);
         startActivity(intent);
     }
 
@@ -194,6 +232,9 @@ public class CustomLayoutActivity extends ActionBarActivity {
     }
 
     void solveLayout(final String name) {
-        // TODO: solver
+        FragmentManager fragmentManager = getFragmentManager();
+        SolverFragment newFragment = new SolverFragment();
+        newFragment.fen = customLayoutStorage.read(name);
+        newFragment.show(fragmentManager, "dialog");
     }
 }

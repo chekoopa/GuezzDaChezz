@@ -5,7 +5,6 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,12 +43,12 @@ public class LevelSelectFragment extends DialogFragment {
                         intent.putExtra("set", problemSet);
                         intent.putExtra("id", problemId);
                         startActivity(intent);
-                        LevelSelectFragment.this.getDialog().dismiss();
+                        dismiss();
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        LevelSelectFragment.this.getDialog().cancel();
+                        dismiss();
                     }
                 });
 
@@ -79,7 +78,7 @@ public class LevelSelectFragment extends DialogFragment {
                     intent.putExtra("set", problemSet);
                     intent.putExtra("id", 1);
                     startActivity(intent);
-                    LevelSelectFragment.this.getDialog().dismiss();
+                    dismiss();
                 }
             });
         }
@@ -90,14 +89,16 @@ public class LevelSelectFragment extends DialogFragment {
         levelSelector.setMax(Math.min(lastCompleted + 1, maxProblems) - 1);
         levelSelector.setProgress(levelSelector.getMax());
 
-        Dialog dialog = builder.show();
+        return builder.create();
 
+        /*
+        Dialog dialog = builder.show();
         // dirty hack for styling the divider
         dialog.findViewById(dialog.getContext().getResources().
                 getIdentifier("android:id/titleDivider", null, null)).
                 setBackgroundColor(Color.rgb(0, 196, 0));
-
         return dialog;
+        */
     }
 
     @Override

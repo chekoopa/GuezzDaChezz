@@ -5,14 +5,14 @@
     tools:ignore="AlwaysShowAction" >
     <item android:id="@+id/action_select_figure"
         android:title=""
-        app:showAsAction="always"/>
+        app:showAsAction="always" />
     <item android:id="@+id/action_board_parameters"
         android:title="@string/action_preferences"
-        android:icon="@drawable/ic_action_refresh"
+        android:icon="@drawable/ic_action_view_as_list"
         app:showAsAction="always"/>
     <item android:id="@+id/action_board_data"
         android:title="@string/action_board_data"
-        android:icon="@drawable/ic_action_refresh"
+        android:icon="@drawable/ic_action_storage"
         app:showAsAction="always"/>
 
 </menu>

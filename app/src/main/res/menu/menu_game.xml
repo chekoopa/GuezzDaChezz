@@ -10,6 +10,10 @@
         android:icon="@drawable/ic_action_help"
         android:title="@string/action_hint"
         app:showAsAction="always" />
+    <item android:id="@+id/action_write_layout"
+        android:icon="@drawable/ic_action_save"
+        android:title="@string/action_write_layout"
+        app:showAsAction="always" />
     <item android:id="@+id/action_freeplay"
         android:icon="@drawable/ic_action_play_over_video"
         android:title="@string/action_freeplay"
