@@ -89,16 +89,14 @@ public class LevelSelectFragment extends DialogFragment {
         levelSelector.setMax(Math.min(lastCompleted + 1, maxProblems) - 1);
         levelSelector.setProgress(levelSelector.getMax());
 
-        return builder.create();
 
-        /*
         Dialog dialog = builder.show();
         // dirty hack for styling the divider
         dialog.findViewById(dialog.getContext().getResources().
                 getIdentifier("android:id/titleDivider", null, null)).
-                setBackgroundColor(Color.rgb(0, 196, 0));
+                setBackgroundColor(getResources().getColor(R.color.divider_green));
         return dialog;
-        */
+
     }
 
     @Override

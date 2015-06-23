@@ -1,6 +1,7 @@
 package com.sirckopo.guezzdachezz;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -417,13 +418,16 @@ public class LayoutEditorActivity extends ActionBarActivity {
                 Toast.makeText(LayoutEditorActivity.this, getString(R.string.tip_import),
                         Toast.LENGTH_SHORT).show();
             }
-        });
-        alert.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+        }).setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
             }
         });
 
-        alert.show();
+        Dialog dialog = alert.show();
+        // dirty hack for styling the divider
+        dialog.findViewById(dialog.getContext().getResources().
+                getIdentifier("android:id/titleDivider", null, null)).
+                setBackgroundColor(getResources().getColor(R.color.divider_green));
     }
 
     private void exportFEN() {
@@ -441,6 +445,11 @@ public class LayoutEditorActivity extends ActionBarActivity {
         });
 
         alert.show();
+        Dialog dialog = alert.show();
+        // dirty hack for styling the divider
+        dialog.findViewById(dialog.getContext().getResources().
+                getIdentifier("android:id/titleDivider", null, null)).
+                setBackgroundColor(getResources().getColor(R.color.divider_green));
     }
 
     private boolean saveLayout() {

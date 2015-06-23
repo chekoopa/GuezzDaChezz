@@ -5,6 +5,7 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -624,6 +625,10 @@ public class GameActivity extends ActionBarActivity {
             public void onClick(DialogInterface dialog, int whichButton) {
             }
         });
-        alert.show();
+        Dialog dialog = alert.show();
+        // dirty hack for styling the divider
+        dialog.findViewById(dialog.getContext().getResources().
+                getIdentifier("android:id/titleDivider", null, null)).
+                setBackgroundColor(getResources().getColor(R.color.divider_green));
     }
 }

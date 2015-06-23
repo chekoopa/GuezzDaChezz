@@ -6,6 +6,7 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.util.TypedValue;
 import android.widget.TextView;
 
 public class SolverFragment extends DialogFragment {
@@ -23,6 +24,8 @@ public class SolverFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         tvStatus = new TextView(this.getActivity());
+        tvStatus.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+        tvStatus.setPadding(20, 20, 20, 20);
 
         builder.setView(tvStatus)
                 .setCancelable(true)
