@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.widget.TextView;
 
 public class SolverFragment extends DialogFragment {
@@ -26,6 +27,7 @@ public class SolverFragment extends DialogFragment {
         tvStatus = new TextView(this.getActivity());
         tvStatus.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
         tvStatus.setPadding(20, 20, 20, 20);
+        tvStatus.setGravity(Gravity.CENTER);
 
         builder.setView(tvStatus)
                 .setCancelable(true)
@@ -47,7 +49,7 @@ public class SolverFragment extends DialogFragment {
             }
         } else {
             ChessSolver.solve(fen, onFinish, onUpdate);
-            tvStatus.setText(getText(R.string.tip_solve_wait));
+            tvStatus.setText(waitText);
         }
 
         return builder.create();
@@ -68,7 +70,7 @@ public class SolverFragment extends DialogFragment {
         } else if (answer.length() == 0) {
             answer = getString(R.string.tip_no_solutions);
         }
-        tvStatus.setText(answer);
+        tvStatus.setText(getString(R.string.tip_solutions) + ":\n" + answer);
         done = true;
     }
 
@@ -82,7 +84,7 @@ public class SolverFragment extends DialogFragment {
     private String waitText = ""; // getString(R.string.tip_solve_wait)
 
     void onUpdate() {
-        tvStatus.setText(waitText + " " +
+        tvStatus.setText(waitText + "\n" +
                 ChessSolver.getSolveStatus());
     }
 

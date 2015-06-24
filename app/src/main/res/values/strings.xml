@@ -86,5 +86,6 @@ Planned as a part of another my chess project, stay tuned.</string>
     <string name="tip_solve_wait">Solving. Please, wait...</string>
     <string name="action_write_layout">Write Layout</string>
     <string name="action_copy">Copy</string>
+    <string name="tip_solutions">First moves are</string>
 
 </resources>

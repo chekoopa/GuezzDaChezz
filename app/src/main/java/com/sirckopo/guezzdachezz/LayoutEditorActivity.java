@@ -444,7 +444,6 @@ public class LayoutEditorActivity extends ActionBarActivity {
             }
         });
 
-        alert.show();
         Dialog dialog = alert.show();
         // dirty hack for styling the divider
         dialog.findViewById(dialog.getContext().getResources().

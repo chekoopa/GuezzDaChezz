@@ -85,4 +85,5 @@
     <string name="error_solve">Не удалось прорешать эту задачу</string>
     <string name="action_copy">Копировать</string>
     <string name="action_write_layout">Записать</string>
+    <string name="tip_solutions">Первые ходы</string>
 </resources>
