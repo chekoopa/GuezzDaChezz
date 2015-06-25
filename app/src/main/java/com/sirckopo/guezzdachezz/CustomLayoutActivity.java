@@ -35,8 +35,13 @@ public class CustomLayoutActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_custom_layout);
 
-        updateList();
         ((ListView) findViewById(R.id.layoutList)).setOnItemClickListener(layoutClickListener);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateList();
     }
 
     @Override
