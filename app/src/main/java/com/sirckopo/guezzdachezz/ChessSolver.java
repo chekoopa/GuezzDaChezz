@@ -1,7 +1,6 @@
 package com.sirckopo.guezzdachezz;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import java.util.LinkedList;
 import java.util.concurrent.ExecutionException;
@@ -225,7 +224,6 @@ public class ChessSolver {
             strStatus = values[0];
             if (onUpdate != null)
                 onUpdate.run();
-            Log.i("GDC", "Solver sez " + values[0]);
         }
 
         @Override
