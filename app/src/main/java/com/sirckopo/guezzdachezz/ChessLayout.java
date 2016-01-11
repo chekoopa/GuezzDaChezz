@@ -811,7 +811,7 @@ public class ChessLayout {
 
 	public String getTextBoard() {
 		String o = "";
-		for (int y = size; y > 0; y++) {
+		for (int y = size; y > 0; y--) {
 			for (int x = 1; x <= size; x++) {
 				int f = getBoard(x, y);
 				o += (f / fBlack == 1 ?
